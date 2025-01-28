@@ -10,3 +10,6 @@ numpy
 pyarrow
 O365
 python-dotenv
+pdfplumber
+xlrd
+PyPDF2
