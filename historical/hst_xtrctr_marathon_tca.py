@@ -5,7 +5,7 @@ def get_historical_emails(start_date: datetime.datetime, end_date: datetime.date
     """Fetch and process historical Shell emails within the specified date range."""
         
     config = {
-        'vendor': 'Marathon TCA',
+        'vendor': 'Marathon-TCA',
         'start_date': start_date,
         'end_date': end_date,
         'sender_address': 'KLClark1@Marathonpetroleum.com',

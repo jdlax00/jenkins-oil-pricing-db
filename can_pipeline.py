@@ -9,9 +9,12 @@ suppliers = [
     'chevron',
     'chevron-tca',
     'eprod', 
-    'kotaco', 
+    'kotaco',
+    'marathon',
+    # 'marathon-tca',
     'musket', 
-    'offen', 
+    'offen',
+    'opis',
     'rebel', 
     'shell', 
     'sinclair', 
@@ -56,18 +59,6 @@ for vendor in suppliers:
 
     vendor_dfs[vendor] = df
 
-# AGENDA
-# 1. show final df
-# 2. go through todos 
-# 3. conventional product names
-# 4. terminal names
-# 5. rvp and eth for other suppliers
-# 6. next steps
-# 6a. apply input above to final df
-# 6b. create powerbi dashboard
-# 6c. create function app with triggers
-# Estimated Completion Date: 2025-01-23 -> 2025-01-30
-
 #------------------------------------------------------------------------------------------------------------------
 def process_bbenergy(vendor_dfs):
     df_bbenergy = vendor_dfs['bbenergy']
@@ -96,6 +87,39 @@ def process_bbenergy(vendor_dfs):
     return df_bbenergy
 
 df_bbenergy = process_bbenergy(vendor_dfs)
+# select distinct product
+df_bbenergy[['Location', 'Terminal', 'Product']].drop_duplicates().sort_values(by=['Product'])
+
+product_codes = {
+    "B5": "DSL#2 B5",
+    "B5-Red": "RED#2 B5",
+    "CARB E10-Prem": "CARB 91 E10",
+    "CARB E10-Prem TT": "CARB 91 E10 TT",
+    "CARB E10-Unl": "CARB 87 E10",
+    "CARB E10-Unl TT": "CARB 87 E10 TT",
+    "CARB ULSD": "CARB DSL#2",
+    "CARB ULSD-Red": "CARB RED#2",
+    "CBG E10-Prem": "CBG 91 E10",
+    "CBG E10-Prem TT": "CBG 91 E10 TT",
+    "CBG E10-Unl": "CBG 87 E10",
+    "CBG E10-Unl TT": "CBG 87 E10 TT",
+    "E10-Prem": "92 E10",
+    "E10-Prem TT": "92 E10 TT",
+    "E10-Unl": "87 E10",
+    "E10-Unl TT": "87 E10 TT",
+    "RFG E10-Unl": "RFG 85 E10",
+    "RFG E10-Unl TT": "RFG 85 E10",
+    "ULSD": "DSL#2",
+    "ULSD Winterized": "DSL#2 CFI",
+    "ULSD-Red": "RED#2",
+    "ULSD-Red Winteriz": "RED#2 CFI",
+    "UL2 LED DYED": "RED#2",
+    "ULSD LED": "DSL#2",
+    "ULSD LED-Red": "RED#2",
+}
+
+#apply product codes to df_bbenergy
+df_bbenergy['Product Code'] = df_bbenergy['Product'].map(product_codes)
 
 #------------------------------------------------------------------------------------------------------------------
 ## bigwest
@@ -256,7 +280,6 @@ def process_offen_df(vendor_dfs):
 df_offen = process_offen_df(vendor_dfs)
 
 #------------------------------------------------------------------------------------------------------------------
-# TODO: get rid of ut def
 ## rebel
 def process_rebel_df(vendor_dfs):
     df = vendor_dfs['rebel']
@@ -493,8 +516,42 @@ df_chevron_tca['Time'] = pd.to_datetime(df_chevron_tca['Effective_Date'], format
 # create datetime column
 df_chevron_tca['Datetime'] = pd.to_datetime(df_chevron_tca['Date'] + ' ' + df_chevron_tca['Time'])
 
+#------------------------------------------------------------------------------------------------------------------
+## opis
+df_opis = vendor_dfs['opis']
+# sort by marketing_area
+df_opis = df_opis.sort_values(by=['marketing_area'])
+
+# create Date and Time from effective_datetime
+df_opis['Date'] = pd.to_datetime(df_opis['effective_datetime'], format='mixed').dt.strftime('%Y-%m-%d')
+df_opis['Time'] = pd.to_datetime(df_opis['effective_datetime'], format='mixed').dt.strftime('%H:%M:%S')
+
+#------------------------------------------------------------------------------------------------------------------
+## marathon
+df_marathon = vendor_dfs['marathon']
+
+# rename Product Name -> Product, Price -> Price
+df_marathon.rename(columns={'product': 'Product', 'price': 'Price', 'terminal': 'Terminal', 'tca': 'TCA'}, inplace=True)
+
+# create Date and Time from effective_datetime
+df_marathon['Date'] = pd.to_datetime(df_marathon['effective_datetime'], format='mixed').dt.strftime('%Y-%m-%d')
+df_marathon['Time'] = pd.to_datetime(df_marathon['effective_datetime'], format='mixed').dt.strftime('%H:%M:%S')
+
+# create datetime column
+df_marathon['Datetime'] = pd.to_datetime(df_marathon['Date'] + ' ' + df_marathon['Time'])
+
+# assign supplier
+df_marathon['Supplier'] = 'Marathon'
+
+# location is always empty
+df_marathon['Location'] = ''
+
+# select columns
+df_marathon = df_marathon[['Supplier', 'Location', 'Terminal', 'Product', 'Price', 'Datetime', 'Date', 'Time']]
+
+#------------------------------------------------------------------------------------------------------------------
 # concat all the dataframes
-df = pd.concat([df_bbenergy, df_bigwest, df_bradhall, df_chevron, df_kotaco, df_musket, df_offen, df_rebel, df_shell, df_sinclair, df_sunoco, df_tartan, df_valero])
+df = pd.concat([df_bbenergy, df_bigwest, df_bradhall, df_chevron, df_kotaco, df_marathon, df_musket, df_offen, df_rebel, df_shell, df_sinclair, df_sunoco, df_tartan, df_valero])
 df = df.drop_duplicates()
 
 # order by supplier, location, terminal, product, and datetime
@@ -503,11 +560,4 @@ df = df.sort_values(by=['Supplier', 'Location', 'Terminal', 'Product', 'Datetime
 # lag price by 1 day for each supplier, location, terminal, and product
 df['Price_Yesterday'] = df.groupby(['Supplier', 'Location', 'Terminal', 'Product'])['Price'].shift(1)
 
-# Save master dataset
-destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
 
-destination_blob_manager.upload_blob(
-    blob_name=f"historical_master.csv",
-    content_type="csv",
-    data=df.to_csv(index=False)
-)

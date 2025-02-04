@@ -35,38 +35,75 @@ def parse_bigwest_file(pdf_path):
         current_header = None
         current_datetime = None
         
+        def parse_header(header_line):
+            """Parse the header line into correct product groupings"""
+            parts = header_line.split()
+            products = []
+            i = 0
+            while i < len(parts):
+                if parts[i] == 'CVN':
+                    products.append('CVN HVP')
+                    i += 2
+                elif parts[i] == 'UNL':
+                    products.append('UNL E10 HVP')
+                    i += 3
+                elif parts[i] == 'MID':
+                    products.append('MID E10 HVP')
+                    i += 3
+                elif parts[i] == 'PRE':
+                    products.append('PRE E10 HVP')
+                    i += 3
+                elif parts[i] == 'ULSD' and i + 1 < len(parts) and parts[i + 1] == '#2':
+                    products.append('ULSD #2')
+                    i += 2
+                elif parts[i] == 'ULSD' and i + 2 < len(parts) and parts[i + 1] == 'DYED' and parts[i + 2] == '#2':
+                    products.append('ULSD DYED #2')
+                    i += 3
+                else:
+                    i += 1
+            print(f"Parsed header products: {products}")  # Debug: Show parsed products
+            return products
+        
         for page in pdf_reader.pages:
             text = page.extract_text()
             lines = [line.strip() for line in text.split('\n') if line.strip()]
             
+            print("\n=== New Page ===")
             for i, line in enumerate(lines):
-                # Parse effective datetime
+                print(f"Line {i}: {line}")
+                
                 if 'Effective At:' in line:
                     datetime_str = line.replace('Effective At:', '').strip()
+                    print(f"Found datetime: {datetime_str}")
                     try:
                         current_datetime = datetime_str.split()
+                        print(f"Split datetime: {current_datetime}")
                     except ValueError:
                         continue
                     continue
                 
                 # Parse header with product names
-                if i < len(lines) - 1 and any(x in line for x in ['CVN', 'HVP', 'UNL', 'ULSD']):
-                    current_header = line.split()
+                if i < len(lines) - 1 and any(x in line for x in ['CVN', 'UNL', 'MID', 'PRE', 'ULSD']):
+                    current_header = parse_header(line)
+                    print(f"Found header: {current_header}")
                     continue
                 
                 # Parse location and prices
                 if ',' in line and any(state in line for state in ['ID', 'UT']):
                     current_location = line.strip()
-                    # Get the next line which should contain prices
+                    print(f"\nProcessing location: {current_location}")
                     if i + 1 < len(lines):
                         price_line = lines[i + 1].strip()
+                        print(f"Price line: {price_line}")
                         if price_line and all(c.isdigit() or c in '. ' for c in price_line):
                             price_values = [float(v) for v in price_line.split()]
+                            print(f"Price values: {price_values}")
                             
                             # Map products to prices
                             products_for_row = (current_header[:len(price_values)] 
                                               if current_header and len(current_header) >= len(price_values)
                                               else [f'Product_{i+1}' for i in range(len(price_values))])
+                            print(f"Products for row: {products_for_row}")
                             
                             for product, price in zip(products_for_row, price_values):
                                 if current_datetime:

@@ -2,7 +2,7 @@ from utils.blob_operations import BlobStorageManager
 import pandas as pd
 from io import StringIO
 
-vendor = "opis"
+vendor = "bigwest"
 
 blob_manager = BlobStorageManager(f"jenkins-pricing-staging/{vendor}")
 

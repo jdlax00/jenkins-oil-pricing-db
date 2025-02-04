@@ -1,29 +1,65 @@
 import azure.functions as func
-from extractors.shell_extractor import process_shell_email
-from staging import shell_staging
-from canonical import can_pipeline
+import json
+from utils.graph_email_processor_v2 import GraphEmailProcessor
+import logging
 
 app = func.FunctionApp()
 
-# Email triggers for raw data extraction
+# Shell Email Trigger
 @app.function_name(name="ShellExtractor")
-@app.outlook_message_trigger(
-    name="email",
-    connection="Office365Connection",
-    from_address="Shell-MarketHub-US-Fuels@shell.com",
-    to_address="fuelprices@jenkinsoil.com"
-)
-def shell_extractor(email: func.EmailMessage) -> None:
-    process_shell_email(email)
+@app.event_grid_trigger(arg_name="event")
+def shell_extractor(event: func.EventGridEvent) -> None:
+    logging.info('Python EventGrid trigger function processed an event')
+    
+    # Get the email data from the event
+    result = json.loads(event.get_json())
+    
+    if result.get('from', {}).get('emailAddress', {}).get('address') == 'shell-markethub-us-fuels@shell.com':
+        logging.info(f"Processing Shell email")
+        config = {
+            'vendor': 'Shell',
+            'process_attachments': True,
+        }
+        processor = GraphEmailProcessor()
+        processor.process_historical_message(result, config)
 
-# Blob trigger for data cleaning
-@app.function_name(name="ShellDataCleaner")
-@app.blob_trigger(path="raw-data-container/shell_{name}", connection="AzureWebJobsStorage")
-def shell_cleaning_trigger(blob: func.InputStream) -> None:
-    shell_staging.clean_shell_data(blob)
+# BBEnergy Email Trigger
+@app.function_name(name="BBEnergyExtractor")
+@app.event_grid_trigger(arg_name="event")
+def bbenergy_extractor(event: func.EventGridEvent) -> None:
+    result = json.loads(event.get_json())
+    
+    if (result.get('from', {}).get('emailAddress', {}).get('address') == 'petromail@dtnenergy.com' and
+        'BBE1' in result.get('subject', '')):
+        logging.info(f"Processing BBEnergy email")
+        config = {
+            'vendor': 'BBEnergy',
+            'process_attachments': False,
+        }
+        processor = GraphEmailProcessor()
+        processor.process_historical_message(result, config)
 
-# # Timer trigger for data consolidation
-# @app.function_name(name="MasterConsolidator")
-# @app.timer_trigger(schedule="0 0 * * * *")  # Run hourly
-# def consolidation_trigger(timer: func.TimerRequest) -> None:
-#     master_consolidator.consolidate_data()
+# Offen Email Trigger
+@app.function_name(name="OffenExtractor")
+@app.event_grid_trigger(arg_name="event")
+def offen_extractor(event: func.EventGridEvent) -> None:
+    result = json.loads(event.get_json())
+    
+    if (result.get('from', {}).get('emailAddress', {}).get('address') == 'Pricing@offenpetro.com'):
+        logging.info(f"Processing Offen email")
+        config = {
+            'vendor': 'Offen',
+            'process_attachments': True,
+        }
+        processor = GraphEmailProcessor()
+        processor.process_historical_message(result, config)
+
+# BBEnergy Data Parser
+@app.function_name(name="BBEnergyDataParser")
+@app.blob_trigger(arg_name="myblob", 
+                  path="jenkins-pricing-historical/bbenergy", 
+                  connection="AzureWebJobsStorage")
+def bbenergy_data_parser(event: func.EventGridEvent) -> None:
+    result = json.loads(event.get_json())
+    logging.info(f"Processing BBEnergy data")
+    

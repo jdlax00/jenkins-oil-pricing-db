@@ -13,3 +13,8 @@ python-dotenv
 pdfplumber
 xlrd
 PyPDF2
+openpyxl
+bs4
+rich
+requests
+re

@@ -36,11 +36,12 @@ def parse_bradhall_file(pdf_path):
         pdf_reader = PyPDF2.PdfReader(pdf_path)
         current_header = None
         
-        for page in pdf_reader.pages:
+        for page_num, page in enumerate(pdf_reader.pages):
+            # print(f"\n=== Processing Page {page_num + 1} ===")
             text = page.extract_text()
             lines = text.split('\n')
             
-            for line in lines:
+            for line_num, line in enumerate(lines):
                 # Clean up the line
                 line = re.sub(r'\s+', ' ', line).strip()
                 line = line.replace('• ', '')  # Remove bullet points
@@ -51,8 +52,13 @@ def parse_bradhall_file(pdf_path):
                 
                 # Check if this is a header line that defines products
                 if 'Effective Time' in line:
-                    # Extract product names from header
-                    current_header = line.split('Effective Time')[1].strip().split()
+                    print(f"\nFound header line: {line}")
+                    # Extract product names from header and clean up
+                    header_text = line.split('Effective Time')[1].strip()
+                    # Fix running together products by adding space before each product type
+                    header_text = re.sub(r'([A-Z]-[A-Z]+\d*)', r' \1', header_text)
+                    current_header = [x.strip() for x in header_text.split() if x.strip()]
+                    print(f"Extracted product names: {current_header}")
                     continue
                 
                 # Try to match the data line pattern
@@ -61,15 +67,20 @@ def parse_bradhall_file(pdf_path):
                 
                 if match:
                     location, date, time, values = match.groups()
-                    
-                    # Parse the numerical values
                     price_values = [float(v) for v in values.strip().split()]
                     
+                    print(f"\nProcessing line: {line}")
+                    print(f"Location: {location}")
+                    print(f"Number of prices found: {len(price_values)}")
+                    print(f"Price values: {price_values}")
+                    
                     # If we have a header, use it to map products
-                    # If not, we'll generate generic product names
                     products_for_row = (current_header[:len(price_values)] 
                                       if current_header and len(current_header) >= len(price_values)
                                       else [f'Product_{i+1}' for i in range(len(price_values))])
+                    
+                    print(f"Current header: {current_header}")
+                    print(f"Mapped products: {products_for_row}")
                     
                     # Add each product-price pair as a separate row
                     for product, price in zip(products_for_row, price_values):
