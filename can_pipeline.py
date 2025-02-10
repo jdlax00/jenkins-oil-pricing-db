@@ -1,6 +1,8 @@
 from utils.blob_operations import BlobStorageManager
 import pandas as pd
 from io import StringIO
+import re
+import ast
 
 suppliers = [
     'bbenergy', 
@@ -291,7 +293,7 @@ def process_rebel_df(vendor_dfs):
         'Rebel Oil Company dba ROC', 
         'Cell: (725) 377-3598',
         '10650 W. Charleston Blvd., Suite 100Las Vegas, NV 89135',
-        'Office:  (702) 382-5866',
+        'Office:  (702) 382-5866',
         'UT'
     ])]
 
@@ -519,12 +521,374 @@ df_chevron_tca['Datetime'] = pd.to_datetime(df_chevron_tca['Date'] + ' ' + df_ch
 #------------------------------------------------------------------------------------------------------------------
 ## opis
 df_opis = vendor_dfs['opis']
-# sort by marketing_area
-df_opis = df_opis.sort_values(by=['marketing_area'])
 
-# create Date and Time from effective_datetime
-df_opis['Date'] = pd.to_datetime(df_opis['effective_datetime'], format='mixed').dt.strftime('%Y-%m-%d')
-df_opis['Time'] = pd.to_datetime(df_opis['effective_datetime'], format='mixed').dt.strftime('%H:%M:%S')
+# product = the text between "**OPIS NET TERMINAL" and "PRICES**" in the section column
+df_opis['Product_Group'] = df_opis['section'].str.extract(r'\*\*OPIS NET TERMINAL(.*?)PRICES\*\*', expand=False).str.strip()
+
+# if type is not u, b, or missing, then drop the row
+df_opis = df_opis[
+        (df_opis['type'].isin(['u', 'b'])) | 
+        (df_opis['type'].isna()) |
+        (df_opis['type'].isnull()) |
+        (df_opis['type'] == '') |
+        (df_opis['type'].str.strip() == '') |
+        (pd.isna(df_opis['type']))
+    ]
+
+# if supplier contains "OPIS" then drop the row
+df_opis = df_opis[~df_opis['supplier'].str.contains('OPIS')]
+df_opis = df_opis[~df_opis['supplier'].str.contains('RENO, NV')]
+
+# extract date from marketing_area column
+# the date will always follow the format YYYY-MM-DD AFTER the state abbreviation
+df_opis['Report_Date'] = df_opis['marketing_area'].str.extract(r'(\d{4}-\d{2}-\d{2})')
+
+# year can be extracted from the report date where is it not null
+df_opis['Year'] = df_opis['Report_Date'].str[:4]
+
+# if supplier starts with "CONT" then extract (\d{2})/(\d{2}) from supplier and save it as agg_date
+df_opis['Agg_Date'] = df_opis['supplier'].str.extract(r'(\d{2}/\d{2})')
+
+# if CONT is in the supplier column, then remove the last 5 characters
+df_opis['Supplier'] = df_opis['supplier'].apply(lambda x: 
+        x[:-6] if isinstance(x, str) and 'CONT' in x 
+        else x
+    )
+
+# product subgroups are housed in price1, price2, price3 columns and their respective changes are in move1, move2, move3 columns
+product_group_mapping = {
+    'CBG ETHANOL (10%)': ['UNL', 'MID', 'PRE'],
+    'CBG ETHANOL (10%) TOP TIER': ['UNL', 'MID', 'PRE'],
+    'CBOB ETHANOL(10%)': ['UNL', 'MID', 'PRE'],
+    'CBOB ETHANOL(10%) TOP TIER': ['UNL', 'MID', 'PRE'],
+    'CONV. CLEAR': ['UNL', 'MID', 'PRE'],
+    'E-55': ['UNL'],
+    'E-70': ['UNL'],
+    'E-85': ['UNL'],
+    'LOW SULFUR KEROSENE': ['KERO', 'KERO RD', 'KERO NRLM'],
+    'RENEWABLE R99 ULTRA LOW SULFUR DISTILLATE': ['No.2'],
+    'SPECIALTY DISTILLATE': ['JET', 'MARINE'],
+    'ULTRA LOW SULFUR DISTILLATE': ['No.2', 'No.1', 'Pre'],
+    'ULTRA LOW SULFUR RED DYE DISTILLATE': ['No.2', 'No.1', 'Pre'],
+    'ULTRA LOW SULFUR RED DYE WINTER DISTILLATE': ['No.2', 'No.1', 'Pre'],
+    'ULTRA LOW SULFUR WINTER DISTILLATE': ['No.2', 'No.1', 'Pre'],
+    'WHOLESALE B0-5 SME BIODIESEL': ['ULS No.2', 'ULS2 RD'],
+    'WHOLESALE B20 SME BIODIESEL': ['ULS No.2'],
+    'WHOLESALE B5 SME BIODIESEL': ['ULS No.2', 'ULS2 RD']
+}
+
+# for each product group, get the product
+df_opis['Product'] = df_opis['Product_Group'].map(product_group_mapping)
+
+def determine_date(row):
+    """
+    Determine the date based on product type and conditions.
+    Returns date in YYYY-MM-DD format.
+    """
+    # If Agg_Date exists, use it with the year
+    if pd.notna(row['Agg_Date']) and pd.notna(row['Year']):
+        month, day = row['Agg_Date'].split('/')
+        return f"{row['Year']}-{month}-{day}"
+    
+    # If type is missing, use marketing_area date
+    if pd.isna(row['type']):
+        return row['Report_Date']
+        
+    products = product_group_mapping.get(row['Product_Group'], [])
+    
+    # Extract MM/DD from string and combine with year
+    def extract_and_format_date(date_str, year):
+        if pd.isna(date_str) or pd.isna(year):
+            return None
+        pattern = r'(\d{2})/(\d{2})'
+        match = re.search(pattern, str(date_str))  # Convert to string to handle non-string inputs
+        if match:
+            month = match.group(1)
+            day = match.group(2)
+            return f"{year}-{month}-{day}"
+        return None
+
+    # Special cases for ULS No.2
+    if products == ['ULS No.2']:
+        date = extract_and_format_date(row['move1'], row['Year'])
+        return date if date is not None else extract_and_format_date(row['price2'], row['Year'])
+    elif products == ['ULS No.2', 'ULS2 RD']:
+        for field in ['price3', 'price2', 'move1']:
+            date = extract_and_format_date(row[field], row['Year'])
+            if date is not None:
+                return date
+    
+    # General cases based on number of products
+    if len(products) == 3:
+        return extract_and_format_date(row['date'], row['Year'])
+    elif len(products) == 2:
+        return extract_and_format_date(row['price3'], row['Year'])
+    elif len(products) == 1:
+        return extract_and_format_date(row['price2'], row['Year'])
+        
+    return None
+
+df_opis['Date'] = df_opis.apply(determine_date, axis=1)
+
+def extract_time_from_move3(move_val, price_val=None, date_val=None):
+    """
+    Extract time from move3, using price3 or date as backup sources.
+    
+    Args:
+        move_val: Value from move3 column
+        price_val: Value from price3 column (for :mm case)
+        date_val: Value from date column (for hh:mm:s case)
+        
+    Returns:
+        Formatted time string (HH:MM) or None if no valid time found
+    """
+    if pd.isna(move_val):
+        return None
+        
+    move_str = str(move_val)
+    
+    # Case 1: Check for hh:mm:s format
+    special_format_match = re.search(r'(\d{1,2}):(\d{2}):(\d{1})', move_str)
+    if special_format_match and pd.notna(date_val):
+        try:
+            hour = int(special_format_match.group(1))
+            minutes = int(special_format_match.group(2))
+            last_digit = str(date_val)[-1]
+            if 0 <= hour <= 23 and 0 <= minutes <= 59:
+                return f"{hour:02d}:{minutes:02d}"
+        except (ValueError, TypeError, IndexError):
+            pass
+
+    # Case 2: Check for standard hh:mm format
+    full_time_match = re.search(r'(\d{1,2}):(\d{2})', move_str)
+    if full_time_match:
+        try:
+            hour = int(full_time_match.group(1))
+            minutes = int(full_time_match.group(2))
+            if 0 <= hour <= 23 and 0 <= minutes <= 59:
+                return f"{hour:02d}:{minutes:02d}"
+        except ValueError:
+            pass
+    
+    # Case 3: Check for :mm and use price3 for hour
+    minutes_match = re.search(r':(\d{2})', move_str)
+    if minutes_match and pd.notna(price_val):
+        try:
+            price_str = str(price_val)
+            price_digits_match = re.search(r'^(\d{1,2})', price_str)
+            if price_digits_match:
+                hour = int(price_digits_match.group(1))
+                minutes = int(minutes_match.group(1))
+                if 0 <= hour <= 23 and 0 <= minutes <= 59:
+                    return f"{hour:02d}:{minutes:02d}"
+        except (ValueError, TypeError):
+            pass
+            
+    return None
+
+def extract_time_from_move2(move_val, price_val=None):
+    """
+    Extract time from move2 and price2 columns.
+    
+    Args:
+        move_val: Value from move2 column
+        price_val: Value from price2 column (for :mm case)
+        
+    Returns:
+        Formatted time string (HH:MM) or None if no valid time found
+    """
+    if pd.isna(move_val):
+        return None
+        
+    move_str = str(move_val)
+    
+    # Try to find full time pattern (hh:mm)
+    full_time_match = re.search(r'(\d{1,2}):(\d{2})', move_str)
+    if full_time_match:
+        try:
+            hour = int(full_time_match.group(1))
+            minutes = int(full_time_match.group(2))
+            if 0 <= hour <= 23 and 0 <= minutes <= 59:
+                return f"{hour:02d}:{minutes:02d}"
+        except ValueError:
+            return None
+        
+    # Handle special case where only :mm is present
+    minutes_match = re.search(r':(\d{2})', move_str)
+    if minutes_match and pd.notna(price_val):
+        try:
+            price_str = str(price_val)
+            price_digits_match = re.search(r'^(\d{1,2})', price_str)
+            if price_digits_match:
+                hour = int(price_digits_match.group(1))
+                minutes = int(minutes_match.group(1))
+                if 0 <= hour <= 23 and 0 <= minutes <= 59:
+                    return f"{hour:02d}:{minutes:02d}"
+        except (ValueError, TypeError):
+            return None
+            
+    return None
+
+def process_time(df):
+    """
+    Process time column based on multiple sources.
+    
+    Args:
+        df: pandas DataFrame containing required columns
+        
+    Returns:
+        Series containing processed times
+    """
+    def determine_time(row):
+        # Check supplier condition first
+        if pd.notna(row.get('supplier')) and any(key in str(row['supplier']).upper() for key in ['TMNL', 'RETAIL', 'CONT', 'FOB']):
+            if pd.notna(row.get('marketing_area')):
+                time_match = re.search(r'(\d{2}):(\d{2}):(\d{2})', str(row['marketing_area']))
+                if time_match:
+                    return time_match.group(0)
+        
+        # If time column has valid value, use it
+        if pd.notna(row.get('time')):
+            return row['time']
+        
+        # Try move3 with all its special cases
+        time_from_move3 = extract_time_from_move3(row.get('move3'), row.get('price3'), row.get('date'))
+        if time_from_move3:
+            return time_from_move3
+        
+        # Try move2 with price2 as backup
+        time_from_move2 = extract_time_from_move2(row.get('move2'), row.get('price2'))
+        if time_from_move2:
+            return time_from_move2
+        
+        # if supplier contains Tartan then time is 18:00
+        if 'TARTAN' in str(row['supplier']).upper():
+            return '18:00'
+
+        return None
+
+    # Verify required columns exist
+    required_columns = ['time', 'move2', 'move3', 'price2', 'price3', 'date', 'supplier', 'marketing_area']
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    if missing_columns:
+        raise ValueError(f"Missing required columns: {missing_columns}")
+    
+    # Return only the processed time series
+    return df.apply(determine_time, axis=1)
+
+# Example usage:
+df_opis['Time'] = process_time(df_opis)
+
+# clean up date and time columns
+df_opis['Date'] = pd.to_datetime(df_opis['Date'], format='mixed').dt.strftime('%Y-%m-%d')
+df_opis['Time'] = pd.to_datetime(df_opis['Time'], format='mixed').dt.strftime('%H:%M:%S')
+
+# create datetime column
+df_opis['Datetime'] = pd.to_datetime(df_opis['Date'] + ' ' + df_opis['Time'])
+
+def extract_location(row):
+    """
+    Extract city and state from marketing_area when supplier contains specific keywords.
+    
+    Args:
+        row: DataFrame row containing 'supplier' and 'marketing_area' columns
+        
+    Returns:
+        tuple: (city, state) or (None, None) if no match found
+    """
+    # Check if supplier contains any of the keywords
+    keywords = ['TMNL', 'FOB', 'RETAIL', 'CONT']
+    
+    if not pd.isna(row['supplier']) and any(key in str(row['supplier']).upper() for key in keywords):
+        if pd.isna(row['marketing_area']):
+            return None
+            
+        # Extract location pattern: text before comma, then space and two letters
+        pattern = r'^([^,]+),\s*([A-Z]{2})'
+        match = re.search(pattern, str(row['marketing_area']))
+        
+        if match:
+            # if match then combine the city and state into a single column
+            return f"{match.group(1).strip()}, {match.group(2)}"
+            
+    return None
+
+# Apply the function to create new columns
+df_opis['location'] = df_opis.apply(extract_location, axis=1)
+
+df_opis.rename(columns={'type': 'Brand', 'brand': 'location_code'}, inplace=True)
+
+# select columns
+df_opis = df_opis[['Supplier', 'location', "location_code", 'terminal', 'Product_Group', 'Product', 'price1', 'price2', 'price3', 'move1', 'move2', 'move3', 'Date', 'Time', 'Datetime', 'Brand', 'line_number', 'blob_name']]
+
+def assign_prices_optimized(df):
+    """
+    Assign prices to their respective products using vectorized operations.
+    Preserves all original columns from the input DataFrame.
+    
+    Args:
+        df: DataFrame containing the product and price information
+        
+    Returns:
+        DataFrame with prices assigned to individual products
+    """
+    print(f"Processing {len(df)} rows...")
+    
+    # Create a copy to avoid modifying the original
+    df = df.copy()
+    
+    # Convert string lists to actual lists
+    df['Product'] = df['Product'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+    
+    # Initialize list to store the expanded data
+    expanded_data = []
+    
+    # Create mapping for price and move columns
+    price_cols = {0: 'price1', 1: 'price2', 2: 'price3'}
+    move_cols = {0: 'move1', 1: 'move2', 2: 'move3'}
+    
+    # Iterate through DataFrame with simple progress logging
+    total_rows = len(df)
+    for idx, row in enumerate(df.iterrows(), 1):
+        if idx % 100 == 0:  # Log every 100 rows
+            print(f"Processing row {idx}/{total_rows} ({(idx/total_rows*100):.1f}%)")
+            
+        _, row = row  # Unpack the row tuple
+        try:
+            # For each product in the list, create a new row
+            for i, product in enumerate(row['Product']):
+                new_row = row.copy()
+                new_row['Product'] = product
+                new_row['Price'] = row[price_cols.get(i, 'price1')]
+                new_row['Price_Move'] = row[move_cols.get(i, 'move1')]
+                expanded_data.append(new_row.to_dict())
+                
+        except Exception as e:
+            print(f"Error processing row {idx}: {e}")
+            print(f"Row data: {row}")
+            continue
+    
+    # Create final dataframe
+    result_df = pd.DataFrame(expanded_data)
+    
+    # Drop the original price and move columns
+    columns_to_drop = ['price1', 'price2', 'price3', 'move1', 'move2', 'move3']
+    result_df = result_df.drop(columns=columns_to_drop)
+    
+    print("Processing complete!")
+    print(f"Input rows: {len(df)}")
+    print(f"Output rows: {len(result_df)}")
+
+    # drop rows where Price is None
+    result_df = result_df[result_df['Price'].notna()]
+
+    return result_df
+
+# Example usage:
+df_opis_expanded = assign_prices_optimized(df_opis)
+
+# print distinct suppliers
+print(df_opis['terminal'].unique())
 
 #------------------------------------------------------------------------------------------------------------------
 ## marathon
@@ -559,5 +923,3 @@ df = df.sort_values(by=['Supplier', 'Location', 'Terminal', 'Product', 'Datetime
 
 # lag price by 1 day for each supplier, location, terminal, and product
 df['Price_Yesterday'] = df.groupby(['Supplier', 'Location', 'Terminal', 'Product'])['Price'].shift(1)
-
-

@@ -66,7 +66,8 @@ def process_section(lines, section_name, marketing_area):
     processed_data = []
     data_start = 2
     
-    for line in lines[data_start:]:
+    # Keep track of the original line number within the section
+    for line_idx, line in enumerate(lines[data_start:], start=data_start):
         if not line.strip():
             continue
             
@@ -80,6 +81,7 @@ def process_section(lines, section_name, marketing_area):
             if data:
                 data['section'] = section_name
                 data['marketing_area'] = marketing_area
+                data['line_number'] = line_idx  # Add line number to the data dictionary
                 processed_data.append(data)
         except Exception as e:
             print(f"Error processing line: {line}")
@@ -187,6 +189,7 @@ class OpisStaging:
                 try:
                     content = blob_manager.read_blob(blob.name).decode('utf-8')
                     df = convert_opis_to_df(content)
+                    df['blob_name'] = blob.name
                     if df is not None and not df.empty:
                         all_data.append(df)
                     processed_count += 1
@@ -197,7 +200,7 @@ class OpisStaging:
         
         if all_data:
             final_df = pd.concat(all_data, ignore_index=True)
-            final_df = final_df.sort_values(['terminal', 'supplier']).reset_index(drop=True)
+            final_df = final_df.sort_values(['blob_name', 'section', 'line_number']).reset_index(drop=True)
             
             # Save master dataset
             destination_blob_manager.upload_blob(

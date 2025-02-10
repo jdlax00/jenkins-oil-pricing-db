@@ -1,116 +1,233 @@
+import re
 import PyPDF2
 import pandas as pd
-from rich import print as rprint
+from datetime import datetime
+from dataclasses import dataclass
+from typing import List, Dict, Optional, Tuple
+import logging
+from utils.blob_operations import BlobStorageManager
 import os
 import psutil
 import time
+from rich import print as rprint
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn, TimeRemainingColumn
-from utils.blob_operations import BlobStorageManager
-import re
 from io import BytesIO
 
-def parse_bradhall_file(pdf_path):
-    """
-    Parse BradHall PDF file using PyPDF2 and regex to extract pricing data.
-    This parser is product-agnostic and will dynamically handle any product columns present in the file.
-    
-    Args:
-        pdf_path (str): Path to the PDF file
-    
-    Returns:
-        pd.DataFrame: Long-format DataFrame with columns:
-            - location: The pricing location
-            - date: The effective date
-            - time: The effective time
-            - product: The product type
-            - price: The price value
-    """
-    # Lists to store our parsed data in long format
-    locations = []
-    dates = []
-    times = []
-    products = []
-    prices = []
-    
+# Define structured content containers
+@dataclass
+class PDFPage:
+    page_number: int
+    text_content: str
+    lines: List[str]
+    tables: List[List[str]]
+    headers: List[str]
+
+class PDFExtractor:
+    def __init__(self, pdf_path: str):
+        self.pdf_path = pdf_path
+        self.setup_logging()
+        
+    def setup_logging(self):
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s'
+        )
+        self.logger = logging.getLogger(__name__)
+
+    def extract_content(self) -> List[PDFPage]:
+        structured_pages = []
+        try:
+            with open(self.pdf_path, 'rb') as file:
+                reader = PyPDF2.PdfReader(file)
+                for page_num in range(len(reader.pages)):
+                    self.logger.info(f"Processing page {page_num + 1}")
+                    page = reader.pages[page_num]
+                    text = page.extract_text()
+                    lines = [line.strip() for line in text.split('\n') if line.strip()]
+                    tables = self.extract_tables(text)
+                    headers = self.extract_headers(text)
+                    structured_page = PDFPage(
+                        page_number=page_num + 1,
+                        text_content=text,
+                        lines=lines,
+                        tables=tables,
+                        headers=headers
+                    )
+                    structured_pages.append(structured_page)
+            return structured_pages
+        except FileNotFoundError:
+            self.logger.error(f"PDF file not found: {self.pdf_path}")
+            raise
+        except Exception as e:
+            self.logger.error(f"Error processing PDF: {str(e)}")
+            raise
+
+    def extract_tables(self, text: str) -> List[List[str]]:
+        tables = []
+        potential_rows = re.findall(r'^.*\t.*$', text, re.MULTILINE)
+        if potential_rows:
+            current_table = []
+            for row in potential_rows:
+                cells = [cell.strip() for cell in row.split('\t')]
+                current_table.append(cells)
+            tables.append(current_table)
+        return tables
+
+    def extract_headers(self, text: str) -> List[str]:
+        headers = []
+        lines = text.split('\n')
+        for line in lines:
+            line = line.strip()
+            if (line.isupper() or
+                re.match(r'^\d+\.\s+\w+', line) or
+                re.match(r'^[A-Z][a-z]+(\s+[A-Z][a-z]+)*$', line)):
+                headers.append(line)
+        return headers
+
+def is_date(s: str) -> bool:
     try:
-        pdf_reader = PyPDF2.PdfReader(pdf_path)
-        current_header = None
-        
-        for page_num, page in enumerate(pdf_reader.pages):
-            # print(f"\n=== Processing Page {page_num + 1} ===")
+        datetime.strptime(s, '%m/%d/%Y')
+        return True
+    except ValueError:
+        return False
+
+def is_time(s: str) -> bool:
+    return re.match(r'^\d{2}:\d{2}$', s) is not None
+
+def parse_terminal_line(line: str, current_city_info: Dict) -> Optional[Dict]:
+    tokens = line.split()
+    for i in range(len(tokens)):
+        if is_date(tokens[i]):
+            if i + 1 < len(tokens) and is_time(tokens[i+1]):
+                terminal_code = ' '.join(tokens[:i])
+                date_str = tokens[i]
+                time_str = tokens[i+1]
+                prices = [float(p) for p in tokens[i+2:] if p.replace('.', '', 1).isdigit()]
+                fuel_types = current_city_info.get('fuel_types', [])
+                
+                # Create a dictionary for each product-price pair
+                price_data = {}
+                for j, ft in enumerate(fuel_types):
+                    if j < len(prices):
+                        price_data[ft] = prices[j]
+                
+                try:
+                    effective_datetime = datetime.strptime(f"{date_str} {time_str}", "%m/%d/%Y %H:%M")
+                except ValueError:
+                    return None
+                
+                return {
+                    'terminal_code': terminal_code,
+                    'effective_datetime': effective_datetime,
+                    'city': current_city_info['city'],
+                    'state': current_city_info['state'],
+                    'marketing_area': f"{current_city_info['city']}, {current_city_info['state']}",
+                    **price_data
+                }
+    return None
+
+def extract_tables(text: str) -> List[List[str]]:
+    tables = []
+    potential_rows = re.findall(r'^.*\t.*$', text, re.MULTILINE)
+    if potential_rows:
+        current_table = []
+        for row in potential_rows:
+            cells = [cell.strip() for cell in row.split('\t')]
+            current_table.append(cells)
+        tables.append(current_table)
+    return tables
+
+def extract_headers(text: str) -> List[str]:
+    headers = []
+    lines = text.split('\n')
+    for line in lines:
+        line = line.strip()
+        if (line.isupper() or
+            re.match(r'^\d+\.\s+\w+', line) or
+            re.match(r'^[A-Z][a-z]+(\s+[A-Z][a-z]+)*$', line)):
+            headers.append(line)
+    return headers
+
+def process_pdf(pdf_path: str) -> pd.DataFrame:
+    # Modified to handle both file paths and BytesIO objects
+    try:
+        if isinstance(pdf_path, BytesIO):
+            reader = PyPDF2.PdfReader(pdf_path)
+        else:
+            with open(pdf_path, 'rb') as file:
+                reader = PyPDF2.PdfReader(file)
+                
+        structured_pages = []
+        for page_num in range(len(reader.pages)):
+            page = reader.pages[page_num]
             text = page.extract_text()
-            lines = text.split('\n')
+            lines = [line.strip() for line in text.split('\n') if line.strip()]
+            tables = extract_tables(text)
+            headers = extract_headers(text)
+            structured_page = PDFPage(
+                page_number=page_num + 1,
+                text_content=text,
+                lines=lines,
+                tables=tables,
+                headers=headers
+            )
+            structured_pages.append(structured_page)
+
+        # Rest of the processing remains the same
+        data = []
+        current_city_info = None
+        current_buffer = []
+
+        for page in structured_pages:
+            for line in page.lines:
+                city_match = re.match(r'^([A-Za-z\s/]+),\s*([A-Z]{2})\s+Effective Time\s+(.*)$', line)
+                if city_match:
+                    current_city_info = {
+                        'city': city_match.group(1).strip(),
+                        'state': city_match.group(2).strip(),
+                        'fuel_types': city_match.group(3).split()
+                    }
+                    current_buffer = []
+                    continue
+                if not current_city_info:
+                    continue
+                
+                combined_line = ' '.join(current_buffer + [line])
+                entry = parse_terminal_line(combined_line, current_city_info)
+                if entry:
+                    data.append(entry)
+                    current_buffer = []
+                else:
+                    current_buffer.append(line)
+
+        # Create initial DataFrame
+        df = pd.DataFrame(data)
+        if df.empty:
+            return df
             
-            for line_num, line in enumerate(lines):
-                # Clean up the line
-                line = re.sub(r'\s+', ' ', line).strip()
-                line = line.replace('• ', '')  # Remove bullet points
-                
-                # Skip empty lines and known header lines
-                if not line or any(header in line for header in ['JENKINS OIL', 'Tel.', 'Contact:', 'N/Q =', '*']):
-                    continue
-                
-                # Check if this is a header line that defines products
-                if 'Effective Time' in line:
-                    print(f"\nFound header line: {line}")
-                    # Extract product names from header and clean up
-                    header_text = line.split('Effective Time')[1].strip()
-                    # Fix running together products by adding space before each product type
-                    header_text = re.sub(r'([A-Z]-[A-Z]+\d*)', r' \1', header_text)
-                    current_header = [x.strip() for x in header_text.split() if x.strip()]
-                    print(f"Extracted product names: {current_header}")
-                    continue
-                
-                # Try to match the data line pattern
-                pattern = r"([A-Za-z0-9-]+(?:[ -][A-Za-z0-9-]+)*)\s+(\d{2}/\d{2}/\d{4})\s+(\d{2}:\d{2})\s+((?:\d+\.\d+\s*)+)"
-                match = re.match(pattern, line)
-                
-                if match:
-                    location, date, time, values = match.groups()
-                    price_values = [float(v) for v in values.strip().split()]
-                    
-                    print(f"\nProcessing line: {line}")
-                    print(f"Location: {location}")
-                    print(f"Number of prices found: {len(price_values)}")
-                    print(f"Price values: {price_values}")
-                    
-                    # If we have a header, use it to map products
-                    products_for_row = (current_header[:len(price_values)] 
-                                      if current_header and len(current_header) >= len(price_values)
-                                      else [f'Product_{i+1}' for i in range(len(price_values))])
-                    
-                    print(f"Current header: {current_header}")
-                    print(f"Mapped products: {products_for_row}")
-                    
-                    # Add each product-price pair as a separate row
-                    for product, price in zip(products_for_row, price_values):
-                        locations.append(location.strip())
-                        dates.append(date)
-                        times.append(time)
-                        products.append(product)
-                        prices.append(price)
+        # Get all columns that aren't metadata
+        metadata_cols = ['terminal_code', 'effective_datetime', 'city', 'state', 'marketing_area']
+        product_cols = [col for col in df.columns if col not in metadata_cols]
         
-        # Create DataFrame in long format
-        df = pd.DataFrame({
-            'location': locations,
-            'date': dates,
-            'time': times,
-            'product': products,
-            'price': prices
-        })
+        # Melt the DataFrame to pivot products into rows
+        melted_df = df.melt(
+            id_vars=metadata_cols,
+            value_vars=product_cols,
+            var_name='product',
+            value_name='price'
+        )
         
-        # Convert date column to datetime
-        df['date'] = pd.to_datetime(df['date'])
+        # Remove rows where price is NaN
+        melted_df = melted_df.dropna(subset=['price'])
         
-        # Sort the DataFrame for better organization
-        df = df.sort_values(['date', 'time', 'location', 'product']).reset_index(drop=True)
+        # Sort by datetime and location
+        melted_df = melted_df.sort_values(['effective_datetime', 'marketing_area', 'terminal_code'])
         
-        return df
-        
+        return melted_df
     except Exception as e:
-        print(f"Error parsing PDF: {str(e)}")
-        return pd.DataFrame()
-    
+        logging.error(f"Error processing PDF: {str(e)}")
+        raise
+
 class BradHallStaging:
     def __init__(self):
         """Initialize the Blob extractor"""
@@ -158,11 +275,11 @@ class BradHallStaging:
             
             for blob in blobs:
                 try:
-                    data = blob_manager.read_blob(blob.name)
-                    # Create a BytesIO object from the blob data
-                    pdf_file = BytesIO(data)
-                    df = parse_bradhall_file(pdf_file)
-                    if not df.empty:
+                    pdf_content = blob_manager.read_blob(blob.name)
+                    # Create a BytesIO object from the PDF content
+                    pdf_buffer = BytesIO(pdf_content)
+                    df = process_pdf(pdf_buffer)
+                    if df is not None and not df.empty:
                         all_data.append(df)
                     processed_count += 1
                     progress.update(task, advance=1, description=f"Processing: {blob.name[:50]}")
@@ -172,6 +289,8 @@ class BradHallStaging:
         
         if all_data:
             final_df = pd.concat(all_data, ignore_index=True)
+            final_df = final_df.sort_values(['effective_datetime', 'marketing_area', 'terminal_code']).reset_index(drop=True)
+            
             # Save master dataset
             destination_blob_manager.upload_blob(
                 blob_name=f"{self.vendor.lower()}_historical_master.csv",

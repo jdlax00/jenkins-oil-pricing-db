@@ -1,0 +1,553 @@
+Supplier,Location,Product,Terminal,Brand
+BBEnergy,"AZ, Phoenix",87 E10,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",87 E10 TT,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",CBG 87 E10,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",CBG 87 E10 TT,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",CBG 91 E10,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",CBG 91 E10 TT,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",DSL#2,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",RED#2,CLJ,Unbranded
+BBEnergy,"AZ, Phoenix",CBG 87 E10,KM,Unbranded
+BBEnergy,"AZ, Phoenix",CBG 87 E10 TT,KM,Unbranded
+BBEnergy,"CA, Carson",CARB 87 E10,KM,Unbranded
+BBEnergy,"CA, Carson",CARB 87 E10 TT,KM,Unbranded
+BBEnergy,"CA, Carson",CARB 91 E10,KM,Unbranded
+BBEnergy,"CA, Carson",CARB 91 E10 TT,KM,Unbranded
+BBEnergy,"CA, Carson",CARB DSL#2,KM,Unbranded
+BBEnergy,"CA, Carson",CARB RED#2,KM,Unbranded
+BBEnergy,"CA, Chico",CARB 87 E10,KM,Unbranded
+BBEnergy,"CA, Chico",CARB 87 E10 TT,KM,Unbranded
+BBEnergy,"CA, Chico",CARB DSL#2,KM,Unbranded
+BBEnergy,"CA, Chico",CARB RED#2,KM,Unbranded
+BBEnergy,"CA, Colton",CARB 87 E10,KM,Unbranded
+BBEnergy,"CA, Colton",CARB 87 E10 TT,KM,Unbranded
+BBEnergy,"CA, Colton",CARB DSL#2,KM,Unbranded
+BBEnergy,"CA, Colton",CARB RED#2,KM,Unbranded
+BBEnergy,"CA, San Diego",CARB 87 E10,KM,Unbranded
+BBEnergy,"CA, San Diego",CARB 87 E10 TT,KM,Unbranded
+BBEnergy,"CA, San Diego",CARB DSL#2,KM,Unbranded
+BBEnergy,"CA, San Diego",CARB RED#2,KM,Unbranded
+BBEnergy,"CA, San Jose",CARB 87 E10,KM,Unbranded
+BBEnergy,"CA, San Jose",CARB 87 E10 TT,KM,Unbranded
+BBEnergy,"CA, San Jose",CARB DSL#2,KM,Unbranded
+BBEnergy,"CA, San Jose",CARB RED#2,KM,Unbranded
+BBEnergy,"CO, Aurora",DSL#2,MAG,Unbranded
+BBEnergy,"CO, Aurora",DSL#2 CFI,MAG,Unbranded
+BBEnergy,"CO, Aurora",RED#2,MAG,Unbranded
+BBEnergy,"CO, Aurora",RED#2 CFI,MAG,Unbranded
+BBEnergy,"CO, Aurora",RFG 85 E10,MAG,Unbranded
+BBEnergy,"KS, Great Bend",DSL#2,MAG,Unbranded
+BBEnergy,"KS, Great Bend",DSL#2 CFI,MAG,Unbranded
+BBEnergy,"KS, Great Bend",RED#2,MAG,Unbranded
+BBEnergy,"KS, Great Bend",RED#2 CFI,MAG,Unbranded
+BBEnergy,"KS, Scott City",DSL#2,MAG,Unbranded
+BBEnergy,"KS, Scott City",DSL#2 CFI,MAG,Unbranded
+BBEnergy,"KS, Scott City",RED#2,MAG,Unbranded
+BBEnergy,"KS, Scott City",RED#2 CFI,MAG,Unbranded
+BBEnergy,"NV, Las Vegas",87 E10,KM,Unbranded
+BBEnergy,"NV, Las Vegas",87 E10 TT,KM,Unbranded
+BBEnergy,"NV, Las Vegas",DSL#2,KM,Unbranded
+BBEnergy,"NV, Las Vegas",RED#2,KM,Unbranded
+BBEnergy,"NV, Reno",87 E10,KM,Unbranded
+BBEnergy,"NV, Reno",87 E10 TT,KM,Unbranded
+BBEnergy,"NV, Reno",DSL#2,KM,Unbranded
+BBEnergy,"NV, Reno",RED#2,KM,Unbranded
+BBEnergy,"OR, Eugene",87 E10,KM,Unbranded
+BBEnergy,"OR, Eugene",87 E10 TT,KM,Unbranded
+BBEnergy,"OR, Eugene",DSL#2 B5,KM,Unbranded
+BBEnergy,"OR, Eugene",RED#2 B5,KM,Unbranded
+BBEnergy,"OR, Portland",87 E10,KM N,Unbranded
+BBEnergy,"OR, Portland",87 E10 TT,KM N,Unbranded
+BBEnergy,"OR, Portland",92 E10,KM N,Unbranded
+BBEnergy,"OR, Portland",92 E10 TT,KM N,Unbranded
+BBEnergy,"OR, Portland",DSL#2 B5,KM N,Unbranded
+BBEnergy,"OR, Portland",RED#2 B5,KM N,Unbranded
+BBEnergy,"OR, Portland",87 E10,NU,Unbranded
+BBEnergy,"OR, Portland",87 E10 TT,NU,Unbranded
+BBEnergy,"OR, Portland",92 E10,NU,Unbranded
+BBEnergy,"OR, Portland",92 E10 TT,NU,Unbranded
+BBEnergy,"OR, Portland",DSL#2 B5,NU,Unbranded
+BBEnergy,"OR, Portland",RED#2 B5,NU,Unbranded
+BBEnergy,"TX, East Houston",DSL#2,MAG,Unbranded
+BBEnergy,"TX, East Houston",RED#2,MAG,Unbranded
+BBEnergy,"WA, Tacoma",87 E10,NU,Unbranded
+BBEnergy,"WA, Tacoma",87 E10 TT,NU,Unbranded
+BBEnergy,"WA, Tacoma",92 E10,NU,Unbranded
+BBEnergy,"WA, Tacoma",92 E10 TT,NU,Unbranded
+BBEnergy,"WA, Tacoma",DSL#2,NU,Unbranded
+BBEnergy,"WA, Tacoma",RED#2,NU,Unbranded
+BigWest,"BOISE, ID",CVN HVP,,
+BigWest,"BOISE, ID",MID E10 HVP,,
+BigWest,"BOISE, ID",PRE E10 HVP,,
+BigWest,"BOISE, ID",ULSD #2,,
+BigWest,"BOISE, ID",ULSD DYED #2,,
+BigWest,"BOISE, ID",UNL E10 HVP,,
+BigWest,"BURLEY, ID",CVN HVP,,
+BigWest,"BURLEY, ID",MID E10 HVP,,
+BigWest,"BURLEY, ID",PRE E10 HVP,,
+BigWest,"BURLEY, ID",ULSD #2,,
+BigWest,"BURLEY, ID",UNL E10 HVP,,
+BigWest,"NORTH SALT LAKE, UT",CVN HVP,,
+BigWest,"NORTH SALT LAKE, UT",MID E10 HVP,,
+BigWest,"NORTH SALT LAKE, UT",PRE E10 HVP,,
+BigWest,"NORTH SALT LAKE, UT",ULSD #2,,
+BigWest,"NORTH SALT LAKE, UT",UNL E10 HVP,,
+BigWest,"POCATELLO, ID",CVN HVP,,
+BigWest,"POCATELLO, ID",MID E10 HVP,,
+BigWest,"POCATELLO, ID",PRE E10 HVP,,
+BigWest,"POCATELLO, ID",ULSD #2,,
+BigWest,"POCATELLO, ID",ULSD DYED #2,,
+BigWest,"POCATELLO, ID",UNL E10 HVP,,
+BradHall,,85-E10,,
+BradHall,,87-E10,,
+BradHall,,88-E10,,
+BradHall,,88-MID,,
+BradHall,,89-E10,,
+BradHall,,91-E10,,
+BradHall,,C-ULSD1,,
+BradHall,,C-ULSD2,,
+BradHall,,D-ULSD1,,
+BradHall,,D-ULSD2,,
+BradHall,,Product_1,,
+BradHall,,Product_10,,
+BradHall,,Product_11,,
+BradHall,,Product_12,,
+BradHall,,Product_13,,
+BradHall,,Product_2,,
+BradHall,,Product_3,,
+BradHall,,Product_4,,
+BradHall,,Product_5,,
+BradHall,,Product_6,,
+BradHall,,Product_7,,
+BradHall,,Product_8,,
+BradHall,,Product_9,,
+Chevron,,CT MU C 10.0%,5532340-,
+Chevron,,CT PU C 10.0%,5532340-,
+Chevron,,CT RU C 10.0%,5532340-,
+Chevron,,CT ULS CONV DF2,5532340-,
+Chevron,,CT MU C 10.0%,7280669-FACILITY 201365,
+Chevron,,CT PU C 10.0%,7280669-FACILITY 201365,
+Chevron,,CT RU C 10.0%,7280669-FACILITY 201365,
+Chevron,,CT ULS CONV DF2,7280669-FACILITY 201365,
+Chevron,,CT MU C 10.0%,7280757-FACILITY 203591,
+Chevron,,CT PU C 10.0%,7280757-FACILITY 203591,
+Chevron,,CT RU C 10.0%,7280757-FACILITY 203591,
+Chevron,,CT ULS CONV DF2,7280757-FACILITY 203591,
+Chevron,,CT LS CONV DF2 DYED,7394409-FACILITY #72828,
+Chevron,,CT MU C 10.0%,7394409-FACILITY #72828,
+Chevron,,CT PU C 10.0%,7394409-FACILITY #72828,
+Chevron,,CT RU C 10.0%,7394409-FACILITY #72828,
+Chevron,,CT MU C 10.0%,7394420-FACILITY #202277,
+Chevron,,CT PU C 10.0%,7394420-FACILITY #202277,
+Chevron,,CT RU C 10.0%,7394420-FACILITY #202277,
+Chevron,,CT ULS CONV DF2,7394420-FACILITY #202277,
+Chevron,,CT MU C 10.0%,7394519-FACILITY #207387,
+Chevron,,CT PU C 10.0%,7394519-FACILITY #207387,
+Chevron,,CT RU C 10.0%,7394519-FACILITY #207387,
+Chevron,,CT ULS CONV DF2,7394519-FACILITY #207387,
+Chevron,,CT MU C 10.0%,7468340-FAC # 201366 (PARAWON),
+Chevron,,CT PU C 10.0%,7468340-FAC # 201366 (PARAWON),
+Chevron,,CT RU C 10.0%,7468340-FAC # 201366 (PARAWON),
+Chevron,,CT ULS CONV DF2,7468340-FAC # 201366 (PARAWON),
+Chevron,,CT MU C 10.0%,8087747-FAC 73836,
+Chevron,,CT PU C 10.0%,8087747-FAC 73836,
+Chevron,,CT RU C 10.0%,8087747-FAC 73836,
+Chevron,,CT ULS CONV DF2,8087747-FAC 73836,
+Chevron,,CT MU C 10.0%,8087752-FAC 309359,
+Chevron,,CT PU C 10.0%,8087752-FAC 309359,
+Chevron,,CT RU C 10.0%,8087752-FAC 309359,
+Chevron,,CT ULS CONV DF2,8087752-FAC 309359,
+Chevron,,CT MU C 10.0%,8087754-FAC 301715,
+Chevron,,CT PU C 10.0%,8087754-FAC 301715,
+Chevron,,CT RU C 10.0%,8087754-FAC 301715,
+Chevron,,CT ULS CONV DF2,8087754-FAC 301715,
+Chevron,,CT MU C 10.0%,8221968-FAC 75171,
+Chevron,,CT PU C 10.0%,8221968-FAC 75171,
+Chevron,,CT RU C 10.0%,8221968-FAC 75171,
+Chevron,,CT ULS CONV DF2,8221968-FAC 75171,
+Chevron,,CALCO ULS CONV DF1,8314923 - SALT - JRx;C&I CONTRACT,
+Chevron,,CALCO ULS CONV DF1 DYED,8314923 - SALT - JRx;C&I CONTRACT,
+Chevron,,CALCO ULS CONV DF2,8314923 - SALT - JRx;C&I CONTRACT,
+Chevron,,CALCO ULS CONV DF2 DYED,8314923 - SALT - JRx;C&I CONTRACT,
+Chevron,,CALCO ULS CONV DF1,8314923-JRxC&I CONTRACT,
+Chevron,,CALCO ULS CONV DF1 DYED,8314923-JRxC&I CONTRACT,
+Chevron,,CALCO ULS CONV DF2,8314923-JRxC&I CONTRACT,
+Chevron,,CALCO ULS CONV DF2 DYED,8314923-JRxC&I CONTRACT,
+Chevron,,CALCO ULS CONV DF2,8499747 - SALT - Rack Account - Sawtooth,
+Chevron,,CT MU C 10.0%,"RM CEDAR CITY,UT",
+Chevron,,CT PU C 10.0%,"RM CEDAR CITY,UT",
+Chevron,,CT RU C 10.0%,"RM CEDAR CITY,UT",
+Chevron,,CT ULS CV D2,"RM CEDAR CITY,UT",
+Chevron,,CT MU C 10.0%,"RM LAS VEGAS, NV",
+Chevron,,CT MU C 10.0% 13.5,"RM LAS VEGAS, NV",
+Chevron,,CT PU C 10.0%,"RM LAS VEGAS, NV",
+Chevron,,CT PU C 10.0% 13.5,"RM LAS VEGAS, NV",
+Chevron,,CT RU C 10.0%,"RM LAS VEGAS, NV",
+Chevron,,CT RU C 10.0% 13.5,"RM LAS VEGAS, NV",
+Chevron,,CT ULSD2CB0-5,"RM LAS VEGAS, NV",
+Chevron,,CT MU C 10.0%,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT MU C 10.0% 13.5,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT PU C 10.0%,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT PU C 10.0% 13.5,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT RU C 10.0%,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT RU C 10.0% 13.5,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT ULSD2CB0-5,"RM NORTH LAS VEGAS, NV",
+Chevron,,CT LSD2-DYED,"RM SALT LAKE CITY, UT",
+Chevron,,CT MU C 10.0%,"RM SALT LAKE CITY, UT",
+Chevron,,CT PU C 10.0%,"RM SALT LAKE CITY, UT",
+Chevron,,CT RU C 10.0%,"RM SALT LAKE CITY, UT",
+Chevron,,CT RU C E0,"RM SALT LAKE CITY, UT",
+Chevron,,CT ULS CV D2,"RM SALT LAKE CITY, UT",
+Kotaco-ATLAS,,ULS #2 Clr,North Platte FOB,
+Kotaco-ATLAS,,ULS #2 Dy,North Platte FOB,
+Kotaco-BOYET*DOL,,89E10,North Platte FOB,
+Kotaco-CVR S&T,,87E10,North Platte FOB,
+Kotaco-CVR S&T,,89E10,North Platte FOB,
+Kotaco-CVR S&T,,91E10,North Platte FOB,
+Kotaco-DOOLEY,,87E10,North Platte FOB,
+Kotaco-DOOLEY,,89E10,North Platte FOB,
+Kotaco-DOOLEY,,91E10,North Platte FOB,
+Kotaco-DOOLEY,,ULS #2 Clr,North Platte FOB,
+Kotaco-DOOLEY,,ULS #2 Dy,North Platte FOB,
+Kotaco-GROWMARK,,87E10,North Platte FOB,
+Kotaco-GROWMARK,,89E10,North Platte FOB,
+Kotaco-GROWMARK,,ULS #2 Clr,North Platte FOB,
+Kotaco-GROWMARK,,ULS #2 Dy,North Platte FOB,
+Kotaco-HTPEN*HYF~,,87E10,North Platte FOB,
+Kotaco-HTPEN*HYF~,,89E10,North Platte FOB,
+Kotaco-HTPEN*HYF~,,91E10,North Platte FOB,
+Kotaco-HTPEN*HYF~,,ULS #2 Clr,North Platte FOB,
+Kotaco-HTPEN*HYF~,,ULS #2 Dy,North Platte FOB,
+Kotaco-MANSFIELD,,ULS #2 Clr,North Platte FOB,
+Kotaco-MANSFIELD,,ULS #2 Dy,North Platte FOB,
+Kotaco-MNSFD*HYF,,ULS #2 Clr,North Platte FOB,
+Kotaco-MNSFD*HYF,,ULS #2 Dy,North Platte FOB,
+Kotaco-MUSKET   ~,,87E10,Las Vegas KM FOB,
+Kotaco-MUSKET   ~,,91E10,Las Vegas KM FOB,
+Kotaco-MUSKET   ~,,ULS #2 Clr,Las Vegas KM FOB,
+Kotaco-MUSKET   ~,,ULS #2 Dy,Las Vegas KM FOB,
+Kotaco-OFFEN*CFV,,87E10,North Platte FOB,
+Kotaco-OFFEN*CFV,,89E10,North Platte FOB,
+Kotaco-OFFEN*CFV,,91E10,North Platte FOB,
+Kotaco-OFFEN*SNC,,87E10,North Platte FOB,
+Kotaco-QUIKTRIP,,87E10,Las Vegas KM FOB,
+Kotaco-QUIKTRIP,,89E10,Las Vegas KM FOB,
+Kotaco-QUIKTRIP,,91E10,Las Vegas KM FOB,
+Kotaco-QUIKTRIP,,ULS #2 Clr,Las Vegas KM FOB,
+Kotaco-QUIKTRIP,,ULS #2 Dy,Las Vegas KM FOB,
+Kotaco-SINCLAIR,,85E10,Cedar City FOB,
+Kotaco-SINCLAIR,,88E10,Cedar City FOB,
+Kotaco-SINCLAIR,,91E10,Cedar City FOB,
+Kotaco-SINCLAIR,,ULS #2 Clr,Cedar City FOB,
+Kotaco-SINCLAIR,,ULS #2 Dy,Cedar City FOB,
+Kotaco-SINCLAIR,,87E10,Las Vegas HF FOB,
+Kotaco-SINCLAIR,,89E10,Las Vegas HF FOB,
+Kotaco-SINCLAIR,,91E10,Las Vegas HF FOB,
+Kotaco-SINCLAIR,,ULS #2 Clr,Las Vegas HF FOB,
+Kotaco-SINCLAIR,,ULS #2 Dy,Las Vegas HF FOB,
+Kotaco-SINCLAIR,,87E10,Las Vegas KM FOB,
+Kotaco-SINCLAIR,,89E10,Las Vegas KM FOB,
+Kotaco-SINCLAIR,,91E10,Las Vegas KM FOB,
+Kotaco-SINCLAIR,,ULS #2 Clr,Las Vegas KM FOB,
+Kotaco-SINCLAIR,,ULS #2 Clr,Woods Cross FOB,
+Kotaco-SINCLAIR,,ULS #2 Dy,Woods Cross FOB,
+Marathon,,87G10,LAS VEGAS-KM SHL BR,
+Marathon,,89G10,LAS VEGAS-KM SHL BR,
+Marathon,,91G10,LAS VEGAS-KM SHL BR,
+Marathon,,ULN2,LAS VEGAS-KM SHL BR,
+Marathon,,87G10,LAS VEGAS-KNDR M DK,
+Marathon,,89G10,LAS VEGAS-KNDR M DK,
+Marathon,,91G10,LAS VEGAS-KNDR M DK,
+Marathon,,ULN2,LAS VEGAS-KNDR M DK,
+Marathon,,ULN2D,LAS VEGAS-KNDR M DK,
+Marathon,,ULN2,LAS VEGAS-PR PETR DK,
+Marathon,,ULN2D,LAS VEGAS-PR PETR DK,
+Marathon,,85G10,SALT LAKE CITY DOCK,
+Marathon,,87G10,SALT LAKE CITY DOCK,
+Marathon,,88G10,SALT LAKE CITY DOCK,
+Marathon,,88MID,SALT LAKE CITY DOCK,
+Marathon,,91G10,SALT LAKE CITY DOCK,
+Marathon,,U2FI,SALT LAKE CITY DOCK,
+Marathon,,U2FID,SALT LAKE CITY DOCK,
+Marathon,,ULN1,SALT LAKE CITY DOCK,
+Marathon,,ULN1D,SALT LAKE CITY DOCK,
+Marathon,,ULN2,SALT LAKE CITY DOCK,
+Marathon,,ULN2D,SALT LAKE CITY DOCK,
+Marathon,,UMFI,SALT LAKE CITY DOCK,
+Marathon,,UMFID,SALT LAKE CITY DOCK,
+Marathon,,85G10,SALT LAKE CTY SHL BR,
+Marathon,,88G10,SALT LAKE CTY SHL BR,
+Marathon,,88REG,SALT LAKE CTY SHL BR,
+Marathon,,91G10,SALT LAKE CTY SHL BR,
+Marathon,,ULN2,SALT LAKE CTY SHL BR,
+Musket,"AZ, Kingman ",ULS #2, Musket Oil,
+Musket,"NV, Las Vegas ",87 UNL 10%, Holly Energy,
+Musket,"NV, Las Vegas ",87 UNL 10%, KMEP,
+Musket,"NV, Las Vegas ",CONV 91 PRE E10, KMEP,
+Musket,"NV, Las Vegas ",ULS #2, KMEP,
+Musket,"NV, Las Vegas ",ULS #2 Dyed, KMEP,
+Musket,"UT, Delta ",ULS #2, Sawtooth Caverns,
+Offen,,D#2,BIG WEST,
+Offen,,D#2 D,BIG WEST,
+Offen,,LF010,BIG WEST,
+Offen,,PDF,BIG WEST,
+Offen,,PLF010,BIG WEST,
+Offen,,D#2,HF Sinclair UNEV,
+Offen,,D#2 D,HF Sinclair UNEV,
+Offen,,LF010,HF Sinclair UNEV,
+Offen,,PLF010,HF Sinclair UNEV,
+Offen,,D#2,HF WOODS CROSS*,
+Offen,,D#2 D,HF WOODS CROSS*,
+Offen,,LF010,HF WOODS CROSS*,
+Offen,,PDF,HF WOODS CROSS*,
+Offen,,PLF010,HF WOODS CROSS*,
+Offen,,D#2,HOLLY UNEV,
+Offen,,D#2 D,HOLLY UNEV,
+Offen,,LF010,HOLLY UNEV,
+Offen,,PLF010,HOLLY UNEV,
+Offen,,D#2,MANSFIELD,
+Offen,,D#2 D,MANSFIELD,
+Offen,,LF010,MANSFIELD,
+Offen,,PLF010,MANSFIELD,
+Offen,,D#2,MUSKET KM,
+Offen,,D#2 D,MUSKET KM,
+Offen,,LF010,MUSKET KM,
+Offen,,PLF010,MUSKET KM,
+Offen,,D#2,PBF KM,
+Offen,,D#2 D,PBF KM,
+Offen,,LF010,PBF KM,
+Offen,,PLF010,PBF KM,
+Offen,,D#2,PRO,
+Offen,,D#2 D,PRO,
+Offen,,LF010,PRO,
+Offen,,PLF010,PRO,
+Offen,,D#2,RIVER CITY,
+Offen,,D#2 D,RIVER CITY,
+Offen,,LF010,RIVER CITY,
+Offen,,PLF010,RIVER CITY,
+Offen,,D#2,SINCLAIR-PSX-NSL,
+Offen,,D#2 D,SINCLAIR-PSX-NSL,
+Offen,,LF010,SINCLAIR-PSX-NSL,
+Offen,,PDF,SINCLAIR-PSX-NSL,
+Offen,,PLF010,SINCLAIR-PSX-NSL,
+Offen,,D#2,TRUMAN ARNOLD*,
+Offen,,D#2 D,TRUMAN ARNOLD*,
+Offen,,LF010,TRUMAN ARNOLD*,
+Offen,,PDF,TRUMAN ARNOLD*,
+Offen,,PLF010,TRUMAN ARNOLD*,
+Offen,,D#2,VALERO-KM,
+Offen,,D#2 D,VALERO-KM,
+Offen,,LF010,VALERO-KM,
+Offen,,PLF010,VALERO-KM,
+Offen,,D#2,VALERO-PRO,
+Offen,,D#2 D,VALERO-PRO,
+Offen,,LF010,VALERO-PRO,
+Offen,,PLF010,VALERO-PRO,
+Offen,,D#2,VALERO-tartan,
+Offen,,D#2 D,VALERO-tartan,
+Offen,,LF010,VALERO-tartan,
+Offen,,PLF010,VALERO-tartan,
+Offen,,D#2,tartan,
+Offen,,D#2 D,tartan,
+Offen,,LF010,tartan,
+Offen,,PLF010,tartan,
+Phillips,SALT LAKE CITY,#1 ULS,,Branded
+Phillips,SALT LAKE CITY,#1 ULS Dyed,,Branded
+Phillips,SALT LAKE CITY,#2 ULS,,Branded
+Phillips,SALT LAKE CITY,#2 ULS Dyed,,Branded
+Phillips,SALT LAKE CITY,M8810%,,Branded
+Phillips,SALT LAKE CITY,M8810% LVP 7.8,,Branded
+Phillips,SALT LAKE CITY,MID 88,,Branded
+Phillips,SALT LAKE CITY,MID88 7.8,,Branded
+Phillips,SALT LAKE CITY,PRM10%,,Branded
+Phillips,SALT LAKE CITY,PRM10% 7.8,,Branded
+Phillips,SALT LAKE CITY,U/L8510% 7.8,,Branded
+Phillips,SALT LAKE CITY,U8510%,,Branded
+Phillips,"Woods Cross, UT ",#1 ULS, Holly,Branded
+Phillips,"Woods Cross, UT ",#1 ULS Dyed, Holly,Branded
+Phillips,"Woods Cross, UT ",#2 Prem ULS Dyed, Holly,Branded
+Phillips,"Woods Cross, UT ",#2 ULS, Holly,Branded
+Phillips,"Woods Cross, UT ",#2 ULS Dyed, Holly,Branded
+Phillips,"Woods Cross, UT ",LSCertK1Kero, Holly,Branded
+Phillips,"Woods Cross, UT ",MID 88, Holly,Branded
+Phillips,"Woods Cross, UT ",Mid 88 L7.8#, Holly,Branded
+Phillips,"Woods Cross, UT ",PRM10%, Holly,Branded
+Phillips,"Woods Cross, UT ",PRM10% 7.8, Holly,Branded
+Phillips,"Woods Cross, UT ",PRMULS, Holly,Branded
+Phillips,"Woods Cross, UT ",U/L8510% 7.8, Holly,Branded
+Phillips,"Woods Cross, UT ",U8510%, Holly,Branded
+Rebel,,Clear ULSD,KM,
+Rebel,,Conv Prem,KM,
+Rebel,,Conv Unlead,KM,
+Rebel,,Dyed ULSD,KM,
+Rebel,,Clear ULSD,Pro,
+Rebel,,Conv Prem,Pro,
+Rebel,,Conv Unlead,Pro,
+Rebel,,Dyed ULSD,Pro,
+Rebel,,Clear ULSD,Rebel,
+Rebel,,Conv Prem,Rebel,
+Rebel,,Conv Unlead,Rebel,
+Rebel,,Dyed ULSD,Rebel,
+Shell,"LAS VEGAS, NV ",SH MUL 89 RVP>7.8 CONV ETOH 3.5-4.0 BULK, KINDER MORGAN,
+Shell,"LAS VEGAS, NV ",SH MV 2D (S-15 PPM) BULK, KINDER MORGAN,
+Shell,"LAS VEGAS, NV ",SH RUL 87 RVP>7.8 CONV ETOH 3.5-4.0 BULK, KINDER MORGAN,
+Shell,"LAS VEGAS, NV ","SH VPOWER 91 RVP>7.8 CONV ETOH 3.5-4.0, BULK", KINDER MORGAN,
+Shell,"PHOENIX, AZ ",SH MUL 89 RVP>7.8 CONV ETOH 3.5-4.0 BULK, KINDER MORGAN,
+Shell,"PHOENIX, AZ ","SH RUL 87 RVP9.0 CBG-AZ ETOH 3.5-4.0 BUL, K", KINDER MORGAN,
+Shell,"PHOENIX, AZ ",SH RUL 87 RVP>7.8 CONV ETOH 3.5-4.0 BULK, KINDER MORGAN,
+Shell,"PHOENIX, AZ ","SH VPOWER 91 RVP9.0 CBG-AZ ETOH 3.5-4.0, BULK", KINDER MORGAN,
+Shell,"PHOENIX, AZ ","SH VPOWER 91 RVP>7.8 CONV ETOH 3.5-4.0, BULK", KINDER MORGAN,
+Shell,"TUCSON, AZ ",SH MUL 89 RVP>7.8 CONV ETOH 3.5-4.0 BULK, KINDER MORGAN,
+Shell,"TUCSON, AZ ",SH RUL 87 RVP>7.8 CONV ETOH 3.5-4.0 BULK, KINDER MORGAN,
+Shell,"TUCSON, AZ ","SH VPOWER 91 RVP>7.8 CONV ETOH 3.5-4.0, BULK", KINDER MORGAN,
+Sinclair,CASPER,#1 ULS,,Branded
+Sinclair,CASPER,#1 ULS Dyed,,Branded
+Sinclair,CASPER,#2 ULS,,Branded
+Sinclair,CASPER,#2 ULS Dyed,,Branded
+Sinclair,CASPER,#2 ULSD CFI,,Branded
+Sinclair,CASPER,2WTULS,,Branded
+Sinclair,CASPER,2WTULS Dyed,,Branded
+Sinclair,CASPER,Elite #2 ULS,,Branded
+Sinclair,CASPER,Elite #2 ULS DYED,,Branded
+Sinclair,CASPER,Elite WTR #2 DYED,,Branded
+Sinclair,CASPER,Elite WTR #2 ULS,,Branded
+Sinclair,CASPER,Flex Fuel - 70%,,Branded
+Sinclair,CASPER,Flex Fuel - 80%,,Branded
+Sinclair,CASPER,M8710%,,Branded
+Sinclair,CASPER,PRM,,Branded
+Sinclair,CASPER,PRM10%,,Branded
+Sinclair,CASPER,U8510%,,Branded
+Sinclair,CASPER,UNLD 85,,Branded
+Sinclair,CEDAR CITY,#2 Prem ULS Dyed,,Branded
+Sinclair,CEDAR CITY,#2 Prem ULS Dyed,,Unbranded
+Sinclair,CEDAR CITY,#2 ULS,,Branded
+Sinclair,CEDAR CITY,#2 ULS,,Unbranded
+Sinclair,CEDAR CITY,#2 ULS Dyed,,Branded
+Sinclair,CEDAR CITY,#2 ULS Dyed,,Unbranded
+Sinclair,CEDAR CITY,ETHANL,,Branded
+Sinclair,CEDAR CITY,M8810%,,Branded
+Sinclair,CEDAR CITY,M8810%,,Unbranded
+Sinclair,CEDAR CITY,MID 88,,Branded
+Sinclair,CEDAR CITY,MID 88,,Unbranded
+Sinclair,CEDAR CITY,PRM10%,,Branded
+Sinclair,CEDAR CITY,PRM10%,,Unbranded
+Sinclair,CEDAR CITY,PRMULS,,Branded
+Sinclair,CEDAR CITY,PRMULS,,Unbranded
+Sinclair,CEDAR CITY,U8510%,,Branded
+Sinclair,CEDAR CITY,U8510%,,Unbranded
+Sinclair,CEDAR CITY,U8710%,,Branded
+Sinclair,CEDAR CITY,U8710%,,Unbranded
+Sinclair,LAS VEGAS,#2 ULS,HF,Branded
+Sinclair,LAS VEGAS,#2 ULS,HF,Unbranded
+Sinclair,LAS VEGAS,#2 ULS Dyed,HF,Branded
+Sinclair,LAS VEGAS,#2 ULS Dyed,HF,Unbranded
+Sinclair,LAS VEGAS,M/G10%,HF,Branded
+Sinclair,LAS VEGAS,M/G10%,HF,Unbranded
+Sinclair,LAS VEGAS,PRM10%,HF,Branded
+Sinclair,LAS VEGAS,PRM10%,HF,Unbranded
+Sinclair,LAS VEGAS,U87E10%,HF,Branded
+Sinclair,LAS VEGAS,U87E10%,HF,Unbranded
+Sinclair,LAS VEGAS KM,#2 ULS,,Branded
+Sinclair,LAS VEGAS KM,#2 ULS,,Unbranded
+Sinclair,LAS VEGAS KM,M/G10%,,Branded
+Sinclair,LAS VEGAS KM,M/G10%,,Unbranded
+Sinclair,LAS VEGAS KM,PRM10%,,Branded
+Sinclair,LAS VEGAS KM,PRM10%,,Unbranded
+Sinclair,LAS VEGAS KM,U87E10%,,Branded
+Sinclair,LAS VEGAS KM,U87E10%,,Unbranded
+Sinclair,"LAS VEGAS, PRO PETRO",PRM10%,,Branded
+Sinclair,"LAS VEGAS, PRO PETRO",PRM10%,,Unbranded
+Sinclair,"LAS VEGAS, PRO PETRO",U/L10%,,Branded
+Sinclair,"LAS VEGAS, PRO PETRO",U/L10%,,Unbranded
+Sinclair,SALT LAKE CITY,#1 ULS,,Branded
+Sinclair,SALT LAKE CITY,#1 ULS,,Unbranded
+Sinclair,SALT LAKE CITY,#1 ULS Dyed,,Branded
+Sinclair,SALT LAKE CITY,#1 ULS Dyed,,Unbranded
+Sinclair,SALT LAKE CITY,#2 Prem ULS Dyed,,Branded
+Sinclair,SALT LAKE CITY,#2 ULS,,Branded
+Sinclair,SALT LAKE CITY,#2 ULS,,Unbranded
+Sinclair,SALT LAKE CITY,#2 ULS Dyed,,Branded
+Sinclair,SALT LAKE CITY,#2 ULS Dyed,,Unbranded
+Sinclair,SALT LAKE CITY,#2 ULSD CFI,,Branded
+Sinclair,SALT LAKE CITY,#2 ULSD CFI,,Unbranded
+Sinclair,SALT LAKE CITY,#2 ULSD CFI DYED,,Branded
+Sinclair,SALT LAKE CITY,#2 ULSD CFI DYED,,Unbranded
+Sinclair,SALT LAKE CITY,Elite #2 ULS,,Branded
+Sinclair,SALT LAKE CITY,Elite #2 ULS,,Unbranded
+Sinclair,SALT LAKE CITY,Elite #2 ULS DYED,,Branded
+Sinclair,SALT LAKE CITY,Elite #2 ULS DYED,,Unbranded
+Sinclair,SALT LAKE CITY,Elite WTR #2 DYED,,Branded
+Sinclair,SALT LAKE CITY,Elite WTR #2 DYED,,Unbranded
+Sinclair,SALT LAKE CITY,Elite WTR #2 ULS,,Branded
+Sinclair,SALT LAKE CITY,Elite WTR #2 ULS,,Unbranded
+Sinclair,SALT LAKE CITY,M8810%,,Branded
+Sinclair,SALT LAKE CITY,M8810%,,Unbranded
+Sinclair,SALT LAKE CITY,M8810% LVP 7.8,,Branded
+Sinclair,SALT LAKE CITY,M8810% LVP 7.8,,Unbranded
+Sinclair,SALT LAKE CITY,MID 88,,Branded
+Sinclair,SALT LAKE CITY,MID 88,,Unbranded
+Sinclair,SALT LAKE CITY,MID88 7.8,,Branded
+Sinclair,SALT LAKE CITY,MID88 7.8,,Unbranded
+Sinclair,SALT LAKE CITY,PRM10%,,Branded
+Sinclair,SALT LAKE CITY,PRM10%,,Unbranded
+Sinclair,SALT LAKE CITY,PRM10% 7.8,,Branded
+Sinclair,SALT LAKE CITY,PRM10% 7.8,,Unbranded
+Sinclair,SALT LAKE CITY,PRMULS,,Branded
+Sinclair,SALT LAKE CITY,U/L8510% 7.8,,Branded
+Sinclair,SALT LAKE CITY,U/L8510% 7.8,,Unbranded
+Sinclair,SALT LAKE CITY,U8510%,,Branded
+Sinclair,SALT LAKE CITY,U8510%,,Unbranded
+Sinclair,SALT LAKE CITY,UL#2 ProPreW,,Branded
+Sinclair,SALT LAKE CITY,UL#2ProPreWD,,Branded
+Sinclair,"Woods Cross, UT ",#1 ULS, Holly,Branded
+Sinclair,"Woods Cross, UT ",#1 ULS, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",#1 ULS Dyed, Holly,Branded
+Sinclair,"Woods Cross, UT ",#1 ULS Dyed, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",#2 Prem ULS Dyed, Holly,Branded
+Sinclair,"Woods Cross, UT ",#2 Prem ULS Dyed, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",#2 ULS, Holly,Branded
+Sinclair,"Woods Cross, UT ",#2 ULS, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",#2 ULS Dyed, Holly,Branded
+Sinclair,"Woods Cross, UT ",#2 ULS Dyed, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",LSCertK1Kero, Holly,Branded
+Sinclair,"Woods Cross, UT ",LSCertK1Kero, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",MID 88, Holly,Branded
+Sinclair,"Woods Cross, UT ",MID 88, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",Mid 88 L7.8#, Holly,Branded
+Sinclair,"Woods Cross, UT ",Mid 88 L7.8#, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",PRM10%, Holly,Branded
+Sinclair,"Woods Cross, UT ",PRM10%, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",PRM10% 7.8, Holly,Branded
+Sinclair,"Woods Cross, UT ",PRM10% 7.8, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",PRMULS, Holly,Branded
+Sinclair,"Woods Cross, UT ",PRMULS, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",U/L8510% 7.8, Holly,Branded
+Sinclair,"Woods Cross, UT ",U/L8510% 7.8, Holly,Unbranded
+Sinclair,"Woods Cross, UT ",U8510%, Holly,Branded
+Sinclair,"Woods Cross, UT ",U8510%, Holly,Unbranded
+Sunoco,"LAS VEGAS,NV",DSL-ULSD2,KMI,
+Sunoco,"LAS VEGAS,NV",GAS-SUN 87N 10%,KMI,
+Sunoco,"LAS VEGAS,NV",GAS-SUN 91N 10%,KMI,
+Tartan,,Clear ULSD ,,
+Tartan,,Midgrade (89) conv w/10% eth,,
+Tartan,,Prem (91) ,,
+Tartan,,Prem (91) conv w/10% eth,,
+Tartan,,Prem 0% Eth ,,
+Tartan,,Red ULSD ,,
+Tartan,,Unlead (85) ,,
+Tartan,,Unlead (87) conv w/10% eth,,
+Tartan,,Winter Clr ULSD X1 ,,
+Tartan,,Winter Clr ULSD x 2 ,,
+Tartan,,Winter Red ULSD x 1 ,,
+Tartan,,Winter Red ULSD x 2 ,,
+Valero,Kinder Morgan,UB ULSD,Las Vegas NV,
+Valero,Kinder Morgan,UB ULSDDY,Las Vegas NV,
+Valero,Kinder Morgan,UBCN87E10,Las Vegas NV,
+Valero,Kinder Morgan,UBCN89E10,Las Vegas NV,
+Valero,Kinder Morgan,UBCN91E10,Las Vegas NV,
+Valero,Pro Petroleum,UB ULSD,Las Vegas NV,
+Valero,Pro Petroleum,UB ULSDDY,Las Vegas NV,
+Valero,Pro Petroleum,UB ULSDWD,Las Vegas NV,
+Valero,Pro Petroleum,UBCN87E10,Las Vegas NV,
+Valero,Pro Petroleum,UBCN89E10,Las Vegas NV,
+Valero,Pro Petroleum,UBCN91E10,Las Vegas NV,
