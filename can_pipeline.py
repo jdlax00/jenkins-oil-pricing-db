@@ -13,7 +13,7 @@ suppliers = [
     'eprod', 
     'kotaco',
     'marathon',
-    # 'marathon-tca',
+    'marathon-tca',
     'musket', 
     'offen',
     'opis',
@@ -887,8 +887,17 @@ def assign_prices_optimized(df):
 # Example usage:
 df_opis_expanded = assign_prices_optimized(df_opis)
 
-# print distinct suppliers
-print(df_opis['terminal'].unique())
+# drop line_number, blob_name 
+df_opis_expanded = df_opis_expanded.drop(columns=['line_number', 'blob_name'])
+
+# combine product_group and product into a single column
+df_opis_expanded['Product_Group'] = df_opis_expanded['Product_Group'] + ' ' + df_opis_expanded['Product']
+
+# drop product column
+df_opis_expanded = df_opis_expanded.drop(columns=['Product'])
+
+# rename Product_Group to Product
+df_opis_expanded.rename(columns={'Product_Group': 'Product'}, inplace=True)
 
 #------------------------------------------------------------------------------------------------------------------
 ## marathon
@@ -914,6 +923,8 @@ df_marathon['Location'] = ''
 df_marathon = df_marathon[['Supplier', 'Location', 'Terminal', 'Product', 'Price', 'Datetime', 'Date', 'Time']]
 
 #------------------------------------------------------------------------------------------------------------------
+df_marathon_tca = vendor_dfs['marathon-tca']
+
 # concat all the dataframes
 df = pd.concat([df_bbenergy, df_bigwest, df_bradhall, df_chevron, df_kotaco, df_marathon, df_musket, df_offen, df_rebel, df_shell, df_sinclair, df_sunoco, df_tartan, df_valero])
 df = df.drop_duplicates()

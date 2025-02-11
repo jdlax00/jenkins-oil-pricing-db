@@ -70,13 +70,13 @@ class CanonicalPipeline:
             'bradhall': self._process_bradhall,
             'chevron': self._process_chevron,
             # 'chevron-tca': self._process_chevron_tca,
-            # 'eprod': self._process_eprod,
+            'eprod': self._process_eprod,
             'kotaco': self._process_kotaco,
             'marathon': self._process_marathon,
             # 'marathon-tca': self._process_marathon_tca,
             'musket': self._process_musket,
             'offen': self._process_offen,
-            # 'opis': self._process_opis,
+            'opis': self._process_opis,
             'rebel': self._process_rebel,
             'shell': self._process_shell,
             'sinclair': self._process_sinclair,
@@ -94,10 +94,10 @@ class CanonicalPipeline:
         combined_df = pd.concat(processed_dfs, ignore_index=True)
         combined_df = combined_df.drop_duplicates()
         
-        combined_df = combined_df.sort_values(by=['Supplier', 'Location', 'Terminal', 'Product', 'Datetime'])
-        combined_df['Price_Yesterday'] = combined_df.groupby(['Supplier', 'Location', 'Terminal', 'Product'])['Price'].shift(1)
-        combined_df['Change'] = combined_df['Price'] - combined_df['Price_Yesterday']
-        combined_df.drop(columns=['Price_Yesterday'], inplace=True)
+        combined_df = combined_df.sort_values(by=['Supplier', 'Location', 'Terminal', 'Product', 'Brand', 'Datetime'])
+        # combined_df['Price_Yesterday'] = combined_df.groupby(['Supplier', 'Location', 'Terminal', 'Product', 'Brand'])['Price'].shift(1)
+        # combined_df['Change'] = combined_df['Price'] - combined_df['Price_Yesterday']
+        # combined_df.drop(columns=['Price_Yesterday'], inplace=True)
         
         return combined_df
 
@@ -165,6 +165,13 @@ class CanonicalPipeline:
 
         df['Product'] = df['Product Description'].map(product_codes)
 
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="bbenergy_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_bigwest(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -179,6 +186,14 @@ class CanonicalPipeline:
         df['Terminal'] = ''
         df['Supplier'] = 'BigWest'
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="bigwest_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_bradhall(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -186,12 +201,18 @@ class CanonicalPipeline:
         df = df.copy()
         df.rename(columns={'product': 'Product', 'price': 'Price', 'terminal_code': 'Terminal', 'marketing_area': 'Location'}, inplace=True)
 
-        df = self._standardize_datetime(df, 'date', 'time')
+        df = self._standardize_datetime(df, 'effective_datetime', 'effective_datetime')
         
         df['Supplier'] = 'BradHall'
-        df['Location'] = ''
-        df['Terminal'] = ''
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="bradhall_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_chevron(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -204,18 +225,34 @@ class CanonicalPipeline:
         df['Location'] = ''
         df['Brand'] = ''
 
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="chevron_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_eprod(self, df: pd.DataFrame) -> pd.DataFrame:
         """Process Eprod data into canonical format."""
         df = df.copy()
         
+        df.rename(columns={'total_price': 'Price', 'product': 'Product'}, inplace=True)
         df = self._standardize_datetime(df, 'effective_datetime', 'effective_datetime')
         
         df['Supplier'] = 'Eprod'
         df['Location'] = df['location'].str.split(' ').str[0]
         df['Terminal'] = df['location'].str.split(' ').str[1]
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="eprod_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_kotaco(self, df: pd.DataFrame) -> pd.DataFrame:    
@@ -227,6 +264,14 @@ class CanonicalPipeline:
         df['Supplier'] = 'Kotaco' + '-' + df['Supplier']
         df['Location'] = ''
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="kotaco_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_marathon(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -240,6 +285,13 @@ class CanonicalPipeline:
         df['Supplier'] = 'Marathon'
         df['Location'] = ''
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="marathon_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
 
         return df[STANDARD_COLUMNS]
     
@@ -264,16 +316,21 @@ class CanonicalPipeline:
         df['Terminal'] = df['location'].str.split('-').str[1]
         df['Brand'] = ''
 
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="musket_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_opis(self, df: pd.DataFrame) -> pd.DataFrame:
         """Process Opis data into canonical format."""
         df = df.copy()
 
-        # Extract product group from section column
         df['Product_Group'] = df['section'].str.extract(r'\*\*OPIS NET TERMINAL(.*?)PRICES\*\*', expand=False).str.strip()
 
-        # Filter rows based on type
         df = df[
             (df['type'].isin(['u', 'b'])) | 
             (df['type'].isna()) |
@@ -283,11 +340,9 @@ class CanonicalPipeline:
             (pd.isna(df['type']))
         ]
 
-        # Remove OPIS and RENO, NV from supplier
         df = df[~df['supplier'].str.contains('OPIS')]
         df = df[~df['supplier'].str.contains('RENO, NV')]
 
-        # Process supplier and dates
         df['Report_Date'] = df['marketing_area'].str.extract(r'(\d{4}-\d{2}-\d{2})')
         df['Year'] = df['Report_Date'].str[:4]
         df['Agg_Date'] = df['supplier'].str.extract(r'(\d{2}/\d{2})')
@@ -550,6 +605,7 @@ class CanonicalPipeline:
         df['location'] = df.apply(extract_location, axis=1)
         df.rename(columns={'type': 'Brand', 'brand': 'location_code'}, inplace=True)
         df = df[['Supplier', 'location', "location_code", 'terminal', 'Product_Group', 'Product', 'price1', 'price2', 'price3', 'move1', 'move2', 'move3', 'Date', 'Time', 'Datetime', 'Brand', 'line_number', 'blob_name']]
+        df['location'] = df['location'].fillna(df['location_code'])
 
         def assign_prices_optimized(df):
             """
@@ -615,6 +671,22 @@ class CanonicalPipeline:
             return result_df
         
         df = assign_prices_optimized(df)
+        df = df.drop(columns=['line_number', 'blob_name'])
+        df['Product_Group'] = df['Product_Group'] + ' ' + df['Product']
+        df = df.drop(columns=['Product'])
+        df.rename(columns={'Product_Group': 'Product'}, inplace=True)
+
+        df.rename(columns={'terminal': 'Terminal', 'location': 'Location'}, inplace=True)
+
+        # if price contains -- then na
+        df['Price'] = df['Price'].apply(lambda x: pd.NA if '-' in str(x) else x)
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="opis_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
 
         return df[STANDARD_COLUMNS]
 
@@ -632,6 +704,14 @@ class CanonicalPipeline:
         df['Supplier'] = 'Offen'
         df['Location'] = ''
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="offen_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_rebel(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -657,6 +737,14 @@ class CanonicalPipeline:
         df['Supplier'] = 'Rebel'
         df['Location'] = ''
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="rebel_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_shell(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -671,6 +759,13 @@ class CanonicalPipeline:
         df['Location'] = df['Terminal Name'].str.split('-').str[0]
         df['Terminal'] = df['Terminal Name'].str.split('-').str[1]
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="shell_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
 
         return df[STANDARD_COLUMNS]
     
@@ -687,6 +782,13 @@ class CanonicalPipeline:
         df['Supplier'] = df['supplier']
         df['Brand'] = df['brand']
 
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="sinclair_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_sunoco(self, df: pd.DataFrame) -> pd.DataFrame:    
@@ -694,14 +796,19 @@ class CanonicalPipeline:
         df = df.copy()
         
         df.rename(columns={'product': 'Product', 'price': 'Price'}, inplace=True)
-
         df = self._standardize_datetime(df, 'effective_datetime', 'effective_datetime') 
 
         df['Supplier'] = 'Sunoco'
         df['Location'] = df['location'].str.split('-').str[0]
         df['Terminal'] = df['location'].str.split('-').str[1]
-
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="sunoco_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
 
         return df[STANDARD_COLUMNS] 
     
@@ -748,6 +855,13 @@ class CanonicalPipeline:
         df = cascade_fill_location_and_terminal(df)
         df['Terminal'] = df['Terminal'].fillna(df['Location'])
 
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="tartan_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_valero(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -765,6 +879,13 @@ class CanonicalPipeline:
         df['Terminal'] = df['terminal'].str.split(' ').str[3] + ' ' + df['terminal'].str.split(' ').str[4] + ' ' + df['terminal'].str.split(' ').str[5]
         df['Brand'] = ''
 
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="valero_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
     
     def _process_chevron_tca(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -776,6 +897,14 @@ class CanonicalPipeline:
         df['Supplier'] = 'Chevron TCA'
         df['Location'] = ''
         df['Brand'] = ''
+
+        destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
+        destination_blob_manager.upload_blob(
+            blob_name="chevron_tca_canonical.csv",
+            content_type="csv",
+            data=df.to_csv(index=False)
+        )
+
         return df[STANDARD_COLUMNS]
 
 def main():

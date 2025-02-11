@@ -17,4 +17,3 @@ openpyxl
 bs4
 rich
 requests
-re
