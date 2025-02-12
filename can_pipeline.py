@@ -147,6 +147,10 @@ df_bigwest
 ## bradhall
 df_bradhall = vendor_dfs['bradhall']
 
+df_bradhall = df_bradhall[['terminal_code']].drop_duplicates()
+
+df_bradhall.to_csv('bradhall_terminals.csv', index=False)
+
 # create datetime column
 df_bradhall['Datetime'] = pd.to_datetime(df_bradhall['date'] + ' ' + df_bradhall['time'])
 

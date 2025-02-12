@@ -27,7 +27,7 @@ SUPPLIERS = [
 ]
 
 ENCODINGS = ['utf-8', 'utf-16', 'iso-8859-1', 'cp1252']
-STANDARD_COLUMNS = ['Supplier', 'Location', 'Terminal', 'Product', 'Brand', 'Price', 'Datetime', 'Date', 'Time']
+STANDARD_COLUMNS = ['Supplier', 'Location', 'Terminal', 'Product', 'Brand', 'Price', 'Datetime', 'Date', 'Time', 'Source']
 
 class CanonicalPipeline:
     """
@@ -53,6 +53,7 @@ class CanonicalPipeline:
                 for separator in [',', ';', '\t']:
                     try:
                         return pd.read_csv(StringIO(data_str), sep=separator)
+                        
                     except:
                         continue
             except UnicodeDecodeError:
@@ -134,6 +135,7 @@ class CanonicalPipeline:
         df['Terminal'] = df['location'].str.split('-').str[1]
         df['Supplier'] = 'BBEnergy'
         df['Brand'] = 'Unbranded'
+        df['Source'] = 'BBEnergy'
         
         product_codes = {
             "B5": "DSL#2 B5",
@@ -186,6 +188,7 @@ class CanonicalPipeline:
         df['Terminal'] = ''
         df['Supplier'] = 'BigWest'
         df['Brand'] = ''
+        df['Source'] = 'BigWest'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -205,6 +208,7 @@ class CanonicalPipeline:
         
         df['Supplier'] = 'BradHall'
         df['Brand'] = ''
+        df['Source'] = 'BradHall'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -224,6 +228,7 @@ class CanonicalPipeline:
         df['Supplier'] = 'Chevron'
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Chevron'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -245,6 +250,7 @@ class CanonicalPipeline:
         df['Location'] = df['location'].str.split(' ').str[0]
         df['Terminal'] = df['location'].str.split(' ').str[1]
         df['Brand'] = ''
+        df['Source'] = 'Eprod'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -264,6 +270,7 @@ class CanonicalPipeline:
         df['Supplier'] = 'Kotaco' + '-' + df['Supplier']
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Kotaco'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -285,6 +292,7 @@ class CanonicalPipeline:
         df['Supplier'] = 'Marathon'
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Marathon'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -315,6 +323,7 @@ class CanonicalPipeline:
         df['Location'] = df['location'].str.split('-').str[0]
         df['Terminal'] = df['location'].str.split('-').str[1]
         df['Brand'] = ''
+        df['Source'] = 'DTN Energy'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -681,6 +690,8 @@ class CanonicalPipeline:
         # if price contains -- then na
         df['Price'] = df['Price'].apply(lambda x: pd.NA if '-' in str(x) else x)
 
+        df['Source'] = 'OPIS'
+
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
             blob_name="opis_canonical.csv",
@@ -704,6 +715,7 @@ class CanonicalPipeline:
         df['Supplier'] = 'Offen'
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Offen'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -737,6 +749,7 @@ class CanonicalPipeline:
         df['Supplier'] = 'Rebel'
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Rebel'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -759,7 +772,7 @@ class CanonicalPipeline:
         df['Location'] = df['Terminal Name'].str.split('-').str[0]
         df['Terminal'] = df['Terminal Name'].str.split('-').str[1]
         df['Brand'] = ''
-
+        df['Source'] = 'Shell'
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
             blob_name="shell_canonical.csv",
@@ -781,6 +794,7 @@ class CanonicalPipeline:
         df['Terminal'] = df['location'].str.split('-').str[1]
         df['Supplier'] = df['supplier']
         df['Brand'] = df['brand']
+        df['Source'] = 'DTN Energy'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -802,6 +816,7 @@ class CanonicalPipeline:
         df['Location'] = df['location'].str.split('-').str[0]
         df['Terminal'] = df['location'].str.split('-').str[1]
         df['Brand'] = ''
+        df['Source'] = 'Sunoco'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -823,6 +838,8 @@ class CanonicalPipeline:
         df['Supplier'] = 'Tartan'
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Tartan'
+        
         def cascade_fill_location_and_terminal(df):
 
             df['Terminal'] = None
@@ -878,6 +895,7 @@ class CanonicalPipeline:
         df['Location'] = df['terminal'].str.split(' ').str[0] + ' ' + df['terminal'].str.split(' ').str[1]
         df['Terminal'] = df['terminal'].str.split(' ').str[3] + ' ' + df['terminal'].str.split(' ').str[4] + ' ' + df['terminal'].str.split(' ').str[5]
         df['Brand'] = ''
+        df['Source'] = 'DTN Energy'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -897,6 +915,7 @@ class CanonicalPipeline:
         df['Supplier'] = 'Chevron TCA'
         df['Location'] = ''
         df['Brand'] = ''
+        df['Source'] = 'Chevron'
 
         destination_blob_manager = BlobStorageManager("jenkins-pricing-canonical")
         destination_blob_manager.upload_blob(
@@ -929,10 +948,16 @@ def main():
 df = main()
 
 # select distinct Supplier Location	Product Terminal
-df_subset = df[['Supplier', 'Location', 'Product', 'Terminal', 'Brand']].drop_duplicates()
+df_subset = df[['Supplier', 'Location', 'Terminal', 'Source']].drop_duplicates()
+df_products = df[['Supplier', 'Location', 'Terminal','Product', 'Brand', 'Source']].drop_duplicates()
+
+# filter to Tartan
+df_subset = df_subset[df_subset['Supplier'] == 'BradHall']
+
 # merge cr on Supplier, Product Description = Product, Terminal (Old) = Terminal
 # df_subset = cr.merge(df_subset, left_on=['Supplier', 'Product Description', 'Terminal (Old)', 'Location'], right_on=['Supplier', 'Product', 'Terminal', 'Location'], how='left')
 # rearange columns
 df_subset = df_subset[['Supplier', 'Location', 'Terminal', 'Terminal (Old)', 'Product', 'Product Description', 'Supply Area', 'Product Code', 'Terminal (New)', 'Brand', 'Product Group', 'Alternate Supplier/Account']]
 
 df_subset.to_csv("df_subset.csv", index=False)
+df_products.to_csv("df_products.csv", index=False)

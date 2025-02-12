@@ -94,37 +94,77 @@ def is_date(s: str) -> bool:
 def is_time(s: str) -> bool:
     return re.match(r'^\d{2}:\d{2}$', s) is not None
 
-def parse_terminal_line(line: str, current_city_info: Dict) -> Optional[Dict]:
-    tokens = line.split()
-    for i in range(len(tokens)):
-        if is_date(tokens[i]):
-            if i + 1 < len(tokens) and is_time(tokens[i+1]):
-                terminal_code = ' '.join(tokens[:i])
-                date_str = tokens[i]
-                time_str = tokens[i+1]
-                prices = [float(p) for p in tokens[i+2:] if p.replace('.', '', 1).isdigit()]
-                fuel_types = current_city_info.get('fuel_types', [])
-                
-                # Create a dictionary for each product-price pair
-                price_data = {}
-                for j, ft in enumerate(fuel_types):
-                    if j < len(prices):
-                        price_data[ft] = prices[j]
-                
-                try:
-                    effective_datetime = datetime.strptime(f"{date_str} {time_str}", "%m/%d/%Y %H:%M")
-                except ValueError:
-                    return None
-                
-                return {
-                    'terminal_code': terminal_code,
-                    'effective_datetime': effective_datetime,
-                    'city': current_city_info['city'],
-                    'state': current_city_info['state'],
-                    'marketing_area': f"{current_city_info['city']}, {current_city_info['state']}",
-                    **price_data
-                }
-    return None
+def parse_terminal_line(line: str, current_city_info: Dict) -> List[Dict]:
+    """Parse a terminal line that may contain multiple entries separated by special characters"""
+    # Split the line by the bullet point, but first clean up the character
+    entries = [entry.strip() for entry in line.replace('‚Ä¢', '•').split('•') if entry.strip()]
+    results = []
+    
+    for entry in entries:
+        tokens = entry.split()
+        if not tokens:
+            continue
+            
+        # Find the date token
+        date_index = None
+        for i, token in enumerate(tokens):
+            if is_date(token):
+                date_index = i
+                break
+        
+        if date_index is None:
+            continue
+            
+        # Everything before the date is the terminal code
+        terminal_code = ' '.join(tokens[:date_index])
+        terminal_parts = [p for p in terminal_code.split('-') if p]
+        
+        # Extract terminal details
+        terminal_details = {
+            'terminal_code': terminal_code,
+            'terminal_company': terminal_parts[0] if len(terminal_parts) > 0 else '',
+            'terminal_location': terminal_parts[1] if len(terminal_parts) > 1 else '',
+            'terminal_type': '-'.join(terminal_parts[2:]) if len(terminal_parts) > 2 else '',
+            'terminal_state': terminal_parts[-2] if len(terminal_parts) > 3 else '',
+            'terminal_id': terminal_parts[-1] if len(terminal_parts) > 3 else ''
+        }
+        
+        # Extract date/time
+        date_str = tokens[date_index][-10:]  # Take last 10 chars for date
+        if date_index + 1 >= len(tokens) or not is_time(tokens[date_index + 1]):
+            continue
+            
+        time_str = tokens[date_index + 1]
+        
+        # Extract prices
+        prices = []
+        for token in tokens[date_index + 2:]:
+            try:
+                prices.append(float(token))
+            except ValueError:
+                continue
+        
+        fuel_types = current_city_info.get('fuel_types', [])
+        price_data = {}
+        for j, ft in enumerate(fuel_types):
+            if j < len(prices):
+                price_data[ft] = prices[j]
+        
+        try:
+            effective_datetime = datetime.strptime(f"{date_str} {time_str}", "%m/%d/%Y %H:%M")
+        except ValueError:
+            continue
+        
+        results.append({
+            **terminal_details,
+            'effective_datetime': effective_datetime,
+            'city': current_city_info['city'],
+            'state': current_city_info['state'],
+            'marketing_area': f"{current_city_info['city']}, {current_city_info['state']}",
+            **price_data
+        })
+    
+    return results
 
 def extract_tables(text: str) -> List[List[str]]:
     tables = []
@@ -193,9 +233,9 @@ def process_pdf(pdf_path: str) -> pd.DataFrame:
                     continue
                 
                 combined_line = ' '.join(current_buffer + [line])
-                entry = parse_terminal_line(combined_line, current_city_info)
-                if entry:
-                    data.append(entry)
+                entries = parse_terminal_line(combined_line, current_city_info)
+                if entries:
+                    data.extend(entries)
                     current_buffer = []
                 else:
                     current_buffer.append(line)
@@ -206,7 +246,11 @@ def process_pdf(pdf_path: str) -> pd.DataFrame:
             return df
             
         # Get all columns that aren't metadata
-        metadata_cols = ['terminal_code', 'effective_datetime', 'city', 'state', 'marketing_area']
+        metadata_cols = [
+            'terminal_code', 'terminal_company', 'terminal_location', 
+            'terminal_type', 'terminal_state', 'terminal_id',
+            'effective_datetime', 'city', 'state', 'marketing_area'
+        ]
         product_cols = [col for col in df.columns if col not in metadata_cols]
         
         # Melt the DataFrame to pivot products into rows
